@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './GroupControl.css';
+import SkillTag from "../skills/SkillTag"
 
 class GroupMembersTable extends Component{
     render(){
@@ -37,20 +38,25 @@ class GroupControl extends Component{
     constructor(props){
         super(props);
         this.state={
-            members:[]
+            members:[],
+            users_in_campus:[]
         }
     }
 
     componentDidMount(){
         //get group memebers from server using the username
             //need to find out what group the user is in and need all the members of that group
-        const user_name = this.props.user_name;
+        //get all users who are in the same campus as this user
+        const user_name = this.props.user.user_name;
+        const campus = this.props.user.campus;
 
         this.setState({
             members: [{user_name: "anantk", first_name: "Anant", last_name: "Kandadai"}
             ,{user_name: "jcho", first_name: "Jony", last_name: "Cho"}
-            ,{user_name: "omurshid", first_name: "Osama", last_name: "Murshid"}]
+            ,{user_name: "omurshid", first_name: "Osama", last_name: "Murshid"}],
+            users_in_campus: [{},{},{}]
         });
+
     }
     render(){
         return(

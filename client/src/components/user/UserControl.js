@@ -115,7 +115,7 @@ class UserControl extends Component{
                                                         users = {this.state.users.map(user => ({user_name: user.user_name, password: user.password}))}
                                                 />}
                 {this.state.user_name !== "" && <SkillsControl/>}
-                {this.state.user_name !== "" && <GroupControl/>}
+                {this.state.user_name !== "" && <GroupControl user={this.state.users.find(u=> u.user_name === this.state.user_name)}/>}
             </div>
         );
     }
