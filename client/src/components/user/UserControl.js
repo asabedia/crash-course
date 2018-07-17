@@ -3,6 +3,7 @@ import './UserControl.css';
 import LoginControl from '../login/LoginControl';
 import SkillsControl from '../skills/SkillsControl';
 import GroupControl from '../groups/GroupControl';
+import MeetingControl from '../meeting/MeetingControl';
 
 class EditUserInfoForm extends Component{
     constructor(props){
@@ -109,13 +110,20 @@ class UserControl extends Component{
     render(){
         return(
             <div className = "container">
-                {this.state.user_name !== "" && <EditUserInfoForm user = {this.state.users.find(u=> u.user_name === this.state.user_name)} onSuccessfulEdit = {this.onSuccessfulEdit}/>}
                 {this.state.user_name === "" && <LoginControl 
                                                         onSuccessfulLogin={this.onSuccessfulLogin} 
                                                         users = {this.state.users.map(user => ({user_name: user.user_name, password: user.password}))}
-                                                />}
-                {this.state.user_name !== "" && <SkillsControl/>}
-                {this.state.user_name !== "" && <GroupControl user={this.state.users.find(u=> u.user_name === this.state.user_name)}/>}
+                                                />
+                                                }
+                {this.state.user_name !== "" && 
+                    <div>
+                        <h1>User Dashboard</h1>
+                        <EditUserInfoForm user = {this.state.users.find(u=> u.user_name === this.state.user_name)} onSuccessfulEdit = {this.onSuccessfulEdit}/>
+                        <SkillsControl/>
+                        <GroupControl user={this.state.users.find(u=> u.user_name === this.state.user_name)}/>
+                        <MeetingControl/>
+                    </div>
+                }
             </div>
         );
     }

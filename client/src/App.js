@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import UserControl from './components/user/UserControl';
+import DashboardControl from './components/dashboard/DashboardControl';
 import './App.css';
 
 class App extends Component {
@@ -7,6 +8,7 @@ class App extends Component {
     return (
       <div className="App">
         <UserControl/>
+        <DashboardControl/>
       </div>
     );
   }
