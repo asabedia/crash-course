@@ -1,6 +1,6 @@
 .group-control{
     float: left;
-    width: 50%;
+    width: 100%;
 }
 
 .group-members{
@@ -19,13 +19,22 @@
 
 .ungrouped-users{
     float: left;
-    width: 100%;
+    width: 50%;
 }
 
 .ungrouped-user-list-item{
     border: 1px solid gray;
-    padding: 4px;
+    padding: 8px;
     width: fit-content;
     float: left;
+    margin: 2px;
+}
+
+.ungrouped-user-list-item li{
+    float: left;
+}
+
+.ungrouped-user-list-item button{
+    background: sandybrown;
     margin: 2px;
 }

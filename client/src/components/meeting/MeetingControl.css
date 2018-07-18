@@ -1,0 +1,15 @@
+.upcoming-meetings{
+    float: left;
+    width: 100%;
+    padding-bottom: 4px;
+}
+
+.meetings-table{
+    border: 1px solid black;
+    border-collapse: collapse;
+    width: fit-content;
+}
+
+.meetings-table th, td{
+    padding: 2px;
+}

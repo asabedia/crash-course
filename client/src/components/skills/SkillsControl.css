@@ -3,18 +3,18 @@
     width: auto;
 }
 
-.known-skills-table{
+.known-skills-list{
     float: left;
-    width: max-content;
-    border: 1px solid salmon;
-    margin: 1rem;
+    width: 100%;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
-.wanted-skills-table{
+.wanted-skills-list{
     float: left;
-    width: max-content;
-    border: 1px solid salmon;
-    margin: 1rem;
+    width: 100%;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 .skill-tables{
@@ -25,6 +25,11 @@
     float: left;
     margin: 8px;
     padding: 4px;
-    width: 33.33%;
-    border-right: 1px solid black;
+    width: 100%;
+}
+
+.skills li{
+    float: left;
+    width: fit-content;
+    margin: 4px;
 }
