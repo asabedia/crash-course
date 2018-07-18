@@ -168,8 +168,11 @@ class SkillsControl extends Component{
         return(
             <div className = "skills">
                     <SkillsForm onNewKnowSkill = {this.onNewKnowSkill} onNewWantSkill = {this.onNewWantSkill}/>
-                    <KnownSkillsTable known = {this.state.know} onSkillDelete = {this.onSkillDelete}/>
-                    <WantSkillsTable want = {this.state.want} onSkillDelete = {this.onSkillDelete}/>
+                    <br/>
+                    <div className = "skill-tables">
+                        <KnownSkillsTable known = {this.state.know} onSkillDelete = {this.onSkillDelete}/>
+                        <WantSkillsTable want = {this.state.want} onSkillDelete = {this.onSkillDelete}/>
+                    </div>
             </div>
         );
     }

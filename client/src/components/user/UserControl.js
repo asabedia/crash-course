@@ -109,7 +109,7 @@ class UserControl extends Component{
     }
     render(){
         return(
-            <div className = "container">
+            <div className = "user-dashboard">
                 {this.state.user_name === "" && <LoginControl 
                                                         onSuccessfulLogin={this.onSuccessfulLogin} 
                                                         users = {this.state.users.map(user => ({user_name: user.user_name, password: user.password}))}
@@ -119,9 +119,9 @@ class UserControl extends Component{
                     <div>
                         <h1>User Dashboard</h1>
                         <EditUserInfoForm user = {this.state.users.find(u=> u.user_name === this.state.user_name)} onSuccessfulEdit = {this.onSuccessfulEdit}/>
+                        <MeetingControl/>
                         <SkillsControl/>
                         <GroupControl user={this.state.users.find(u=> u.user_name === this.state.user_name)}/>
-                        <MeetingControl/>
                     </div>
                 }
             </div>

@@ -8,6 +8,7 @@ class App extends Component {
     return (
       <div className="App">
         <UserControl/>
+        <br/>
         <DashboardControl/>
       </div>
     );

@@ -1,0 +1,30 @@
+.skills-form form{
+    float: left;
+    width: auto;
+}
+
+.known-skills-table{
+    float: left;
+    width: max-content;
+    border: 1px solid salmon;
+    margin: 1rem;
+}
+
+.wanted-skills-table{
+    float: left;
+    width: max-content;
+    border: 1px solid salmon;
+    margin: 1rem;
+}
+
+.skill-tables{
+    float: bottom;
+}
+
+.skills{
+    float: left;
+    margin: 8px;
+    padding: 4px;
+    width: 33.33%;
+    border-right: 1px solid black;
+}

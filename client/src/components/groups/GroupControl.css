@@ -1,3 +1,31 @@
-GroupControl{
-    border: 10px;
+.group-control{
+    float: left;
+    width: 50%;
+}
+
+.group-members{
+    float: left;
+    width: 50%;
+}
+
+.group-members-table{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.group-members-table th, td{
+    padding: 8px;
+}
+
+.ungrouped-users{
+    float: left;
+    width: 100%;
+}
+
+.ungrouped-user-list-item{
+    border: 1px solid gray;
+    padding: 4px;
+    width: fit-content;
+    float: left;
+    margin: 2px;
 }
