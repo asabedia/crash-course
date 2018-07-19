@@ -1,0 +1,60 @@
+#getUserInfo
+#x = username
+SELECT UMG.username, UMG.first_name, UMG.last_name, UMG.title
+FROM (Users NATURAL JOIN Member_Of NATURAL JOIN Groups) AS UMG
+WHERE UMG.username = x
+
+#searchUsers
+
+SELECT U.username, U.first_name, U.last_name
+FROM Users U
+WHERE U.campus_name = x
+
+#getGroup
+#x = username
+SELECT U.username, U.first_name, U.last_name
+FROM (Users NATURAL JOIN Member_Of) AS U
+WHERE U.title IN(
+SELECT M.title
+FROM Member_Of M
+WHERE M.username = x)
+
+#getMeeting
+#(x1, x2) = (current time, username)
+SELECT T.start_date_time, T.end_date_time, T.location, T.title, T.name
+FROM (Meetings NATURAL JOIN Groups NATURAL JOIN Topics) AS T
+WHERE T.start_date_time > x1 AND T.title IN(
+SELECT M.title
+FROM Member_Of M
+WHERE M.username = x2)
+
+#skillCount Wants to learn
+# x = number of counts (default 0)
+SELECT COUNT(W.username), W.name
+FROM Wants_To_Learn
+GROUP BY W.name
+HAVING COUNT(W.name) > x
+
+#skillCount Teaches
+SELECT COUNT(W.username), W.name
+FROM Teaches
+GROUP BY W.name
+HAVING COUNT(W.name) > x
+
+#GetWantsAndKnowsForGroups
+--all groups that exist in campus
+--get all wants and all knowns
+
+SELECT G.group_ID, G.title, W.name
+FROM Groups G, Wants_To_Learn W
+WHERE G.campus_name = x
+
+SELECT DISTINCT W.name, M.group_ID
+FROM Wants_To_Learn W
+WHERE W.username IN(
+	SELECT M.username
+	FROM Member_Of M
+	)
+#----------TEST THIS!!!!
+
+

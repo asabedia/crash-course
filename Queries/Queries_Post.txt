@@ -1,0 +1,53 @@
+#CreateUser
+
+INSERT INTO Users
+VALUES (username, first_name, last_name, campus_name, password);
+
+#CreateNewGroup
+#(x, x) = (group title, campus <-- {FromState})
+#(y) = (username <-- {FromState})
+#Returns group_ID for state
+
+INSERT INTO Groups (title, campus_name)
+VALUES (x, x);
+
+INSERT INTO Member_Of
+VALUES (y, SELECT MAX(G.group_ID) FROM Groups G);
+
+#AddToGroup
+#(x, y) = (group member to add, group_ID)
+#Note: x and y can be from state
+
+INSERT INTO Member_Of
+VALUES (x, y);
+
+#New Wants skill
+#(x, y) = (username <-- {FromState}, skill)
+INSERT INTO Skills
+VALUES (x);
+
+INSERT INTO Wants_To_Learn
+VALUES (x, y);
+
+#Knows Skill
+#(x, y) = (username <-- {FromState}, skill)
+
+INSERT INTO Skills
+VALUES (x);
+
+INSERT INTO Teaches
+VALUES (x, y);
+
+#SkillDelete
+#(x, y, z) = (username <-- FromState, skill to delete, table: Wants_To_Learn XOR Teaches)
+
+DELETE FROM z
+WHERE z.username = x AND z.name = y
+
+#UserUpdate
+# (x, y, z) = (new firstname, new lastname, username <-- {FromState})
+UPDATE Users
+SET
+	first_name = x
+	last_name = y
+WHERE Users.username = z
