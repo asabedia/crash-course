@@ -1,0 +1,14 @@
+.skill-dashboard{
+    float: left;
+    width: auto;
+    margin: 1rem;
+}
+
+.skill-aggregates-table{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.skill-aggregates-table th, td{
+    padding: 8px;
+}

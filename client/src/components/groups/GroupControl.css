@@ -1,3 +1,63 @@
-GroupControl{
-    border: 10px;
+.group-control{
+    float: left;
+    width: 100%;
+}
+
+.group-members{
+    float: left;
+    width: 50%;
+}
+
+.group-members-table{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.group-members-table th, td{
+    padding: 8px;
+}
+
+.ungrouped-users{
+    float: left;
+    width: 50%;
+}
+
+.ungrouped-user-list-item{
+    border: 1px solid gray;
+    padding: 8px;
+    width: fit-content;
+    float: left;
+    margin: 2px;
+}
+
+.ungrouped-user-list-item li{
+    float: left;
+}
+
+.ungrouped-user-list-item button{
+    background: sandybrown;
+    margin: 2px;
+}
+
+.known-skill-list-item{
+    float: left;
+    width: fit-content;
+}
+
+.want-skill-list-item{
+    float: left;
+    width: fit-content;
+}
+
+.group-list-item{
+    margin: 2px;
+    border: 1px solid palevioletred;
+    padding: 4px;
+    float: left;
+    width: fit-content;
+}
+
+.group-list-item button{
+    background: yellowgreen;
+    margin: 2px;
 }
