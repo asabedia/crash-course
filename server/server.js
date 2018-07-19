@@ -1,13 +1,13 @@
 const express = require('express');
-//const mysql = require('mysql');
+const mysql = require('mysql');
 const app = express();
 
 const port = 5000;
-/*const db_con = mysql.createConnection({
-	host: "mansci-db.uwaterloo.ca",
+const db_con = mysql.createConnection({
+	host: "localhost",
 	user: "akandada",
-	password: "Anant2018!"
-});*/
+	password: "Spring@*%2018"
+});
 
 app.get("/api/users", (req, res)=>{
     const users = [
@@ -16,6 +16,14 @@ app.get("/api/users", (req, res)=>{
     ]
     res.json(users);
 });
+
+db_con.connect(
+	function(err){
+		//Helper function to catch errors (following wrschools mysql to nodejs guide)
+		if(err) throw err;
+		console.log("CONNECTED TO DATABASE");
+	}
+)
 
 app.listen(port, () => console.log('server started'));
 
