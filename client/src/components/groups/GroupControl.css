@@ -38,3 +38,26 @@
     background: sandybrown;
     margin: 2px;
 }
+
+.known-skill-list-item{
+    float: left;
+    width: fit-content;
+}
+
+.want-skill-list-item{
+    float: left;
+    width: fit-content;
+}
+
+.group-list-item{
+    margin: 2px;
+    border: 1px solid palevioletred;
+    padding: 4px;
+    float: left;
+    width: fit-content;
+}
+
+.group-list-item button{
+    background: yellowgreen;
+    margin: 2px;
+}

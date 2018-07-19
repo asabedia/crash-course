@@ -1,8 +1,53 @@
 import React, { Component } from 'react';
 import './GroupControl.css';
 import UserInfo from '../user/UserInfo';
+import SkillTag from '../skills/SkillTag';
 
+class GroupList extends Component{
+    render(){
+        const groupListItems = this.props.groups.map(group => {
+            return(
+                <li className="group-list-item" key={group.group_id}>
+                    <Group group = {group}/>
+                    <button onClick = {() => this.props.onJoinGroup(group)}>Join Group</button>
+                </li>)
+        });
+        return(
+            <div className = "group-list">
+                <h2>Groups on Campus</h2>
+                <ul>{groupListItems}</ul>
+            </div>
+        );
+    }
+}
 
+class Group extends Component{
+    render(){
+        const knownListItems = this.props.group.known.map(known_skill => {
+            return(
+                <li className="known-skill-list-item" key={known_skill.skill_name}>
+                    <SkillTag skill_name = {known_skill.skill_name}/>
+                </li>
+            )
+        });
+        const wantedListItems = this.props.group.want.map(want_skill => {
+           return(
+                <li className="want-skill-list-item" key={want_skill.skill_name}>
+                        <SkillTag skill_name = {want_skill.skill_name}/>
+                </li>
+           )
+        });
+        return(
+            <div className = "group">
+                <h3>{this.props.group.group_name}</h3>
+                <h4>Known Skills:</h4>
+                <ul>{knownListItems}</ul>
+                <h4>Wanted Skills:</h4>
+                <ul>{wantedListItems}</ul>
+            </div>
+        );
+    }
+}
 
 class CreateGroupForm extends Component{
     constructor(props){
@@ -99,12 +144,14 @@ class GroupControl extends Component{
         this.state={
             group_id: "",
             group_name: "",
+            groups: [],
             members:[],
             users_in_campus:[]
         }
         this.onUserAddedToGroup = this.onUserAddedToGroup.bind(this);
         //this.onUserRemovedFromGroup = this.onUserRemovedFromGroup.bind(this);
         this.onGroupCreated = this.onGroupCreated.bind(this);
+        this.onJoinGroup = this.onJoinGroup.bind(this);
     }
 
     onUserAddedToGroup(user){
@@ -143,18 +190,34 @@ class GroupControl extends Component{
         });
     }
 
+    onJoinGroup(group){
+        //make api request to get the members of this group
+        const members = [
+            {user_name: "jcho", first_name: "Jony", last_name: "Cho"},
+            {user_name: "soas", first_name: "Soas", last_name: "Dopo"}]
+        members.push(this.props.user);
+        this.setState({
+            members: members,
+            group_id: group.group_id,
+            group_name: group.group_name
+        });
+    }
+
     componentDidMount(){
         //get group memebers from server using the username
             //need to find out what group the user is in and need all the members of that group
         //get all users who are in the same campus as this user and have no group
+        //get all groups on the user's campus
         const user_name = this.props.user.user_name;
         const campus = this.props.user.campus;
-
         this.setState({
             users_in_campus: [
                 {user_name: "popqe", first_name: "Edgar", last_name: "Allen Po", known: [{skill_name: "writing"}, {skill_name: "reading"}], want: [{skill_name: "python"},{skill_name: "java"}], hasGroup: false},
                 {user_name: "kirk", first_name: "Captain", last_name: "Kirk", known: [{skill_name: "piloting"}, {skill_name: "ships"}], want: [{skill_name: "dancing"},{skill_name: "bio"}], hasGroup: false}
-            ]
+            ],
+            groups: [
+                {group_id: "1", group_name: "Group 1", known: [{skill_name: "java"},{skill_name: "python"}], want: [{skill_name: "c#"},{skill_name: "c++"}]},
+                {group_id: "2", group_name: "Group 2", known: [{skill_name: "c"},{skill_name: "php"}], want: [{skill_name: "java"},{skill_name: "python"}]}]
         });
 
     }
@@ -163,7 +226,12 @@ class GroupControl extends Component{
         const show_ungrouped_users = ungrouped_users.length > 0 && this.state.members.length > 0;
         return(
             <div className = "group-control">
-                {this.state.members.length<=0 && <CreateGroupForm onGroupCreated = {this.onGroupCreated}/>}
+                {this.state.members.length<=0 && 
+                    <div className = "group-initiation">
+                        <CreateGroupForm onGroupCreated = {this.onGroupCreated}/>
+                        <GroupList onJoinGroup = {this.onJoinGroup} groups = {this.state.groups}/>
+                    </div>
+                }
                 {this.state.members.length>0 && <GroupMembersTable group_name = {this.state.group_name} members = {this.state.members}/>}
                 {show_ungrouped_users && <UngroupedUsers onUserAddedToGroup = {this.onUserAddedToGroup} ungrouped_users = {ungrouped_users}/>}
             </div>
