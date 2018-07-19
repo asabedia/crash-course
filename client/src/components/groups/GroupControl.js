@@ -75,7 +75,7 @@ class GroupMembersTable extends Component{
         });
         return(
             <div className="group-members">
-                <h2>Your Group Members</h2>
+                <h2>{this.props.group_name} Members</h2>
                 <div className="group-members-table">
                 <table>
                     <thead>
@@ -98,6 +98,7 @@ class GroupControl extends Component{
         super(props);
         this.state={
             group_id: "",
+            group_name: "",
             members:[],
             users_in_campus:[]
         }
@@ -137,6 +138,7 @@ class GroupControl extends Component{
         const group_id = 1; //comes from the server 
         this.setState({
             group_id: group_id,
+            group_name: group_name,
             members: [...this.state.members, this.props.user]
         });
     }
@@ -158,11 +160,11 @@ class GroupControl extends Component{
     }
     render(){
         const ungrouped_users = this.state.users_in_campus.filter(u=>!u.hasGroup);
-        const show_ungrouped_users = ungrouped_users.length > 0 && this.state.members > 0;
+        const show_ungrouped_users = ungrouped_users.length > 0 && this.state.members.length > 0;
         return(
             <div className = "group-control">
                 {this.state.members.length<=0 && <CreateGroupForm onGroupCreated = {this.onGroupCreated}/>}
-                {this.state.members.length>0 && <GroupMembersTable members = {this.state.members}/>}
+                {this.state.members.length>0 && <GroupMembersTable group_name = {this.state.group_name} members = {this.state.members}/>}
                 {show_ungrouped_users && <UngroupedUsers onUserAddedToGroup = {this.onUserAddedToGroup} ungrouped_users = {ungrouped_users}/>}
             </div>
         );
