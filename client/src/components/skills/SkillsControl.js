@@ -60,7 +60,7 @@ class SkillsForm extends Component{
         this.setState({
           [name]: value
         });
-      }
+    }
 
     handleNewWant(event){
         if(this.state.want.trim() !== ""){

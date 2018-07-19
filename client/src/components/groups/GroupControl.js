@@ -2,6 +2,46 @@ import React, { Component } from 'react';
 import './GroupControl.css';
 import UserInfo from '../user/UserInfo';
 
+
+
+class CreateGroupForm extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            group_name: ""
+        }
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(event){
+        this.props.onGroupCreated(this.state.group_name);
+        event.preventDefault();
+    }
+    
+    handleInputChange(event){
+        const name = event.target.name;
+        const value = event.target.value;
+        this.setState({
+          [name]: value
+        });
+    }
+
+    render(){
+        return(
+            <div className = "create-group">
+                <form onSubmit = {this.handleSubmit}>
+                    <label>
+                        Group Name:
+                        <input type = "text" name = "group_name" value = {this.state.want} onChange = {this.handleInputChange}/>
+                    </label>
+                    <input type="submit" value="Create Group"/>
+                </form>
+            </div>
+        );
+    }
+}
+
 class UngroupedUsers extends Component{
     render(){
         const listitems = this.props.ungrouped_users.map(user => {
@@ -30,7 +70,6 @@ class GroupMembersTable extends Component{
                     <td>{member.user_name}</td>
                     <td>{member.first_name}</td>
                     <td>{member.last_name}</td>
-                    <td><button onClick = {() => this.props.onUserRemovedFromGroup(member)}>Remove</button></td>
                 </tr>
             );
         });
@@ -58,11 +97,13 @@ class GroupControl extends Component{
     constructor(props){
         super(props);
         this.state={
+            group_id: "",
             members:[],
             users_in_campus:[]
         }
         this.onUserAddedToGroup = this.onUserAddedToGroup.bind(this);
-        this.onUserRemovedFromGroup = this.onUserRemovedFromGroup.bind(this);
+        //this.onUserRemovedFromGroup = this.onUserRemovedFromGroup.bind(this);
+        this.onGroupCreated = this.onGroupCreated.bind(this);
     }
 
     onUserAddedToGroup(user){
@@ -77,7 +118,7 @@ class GroupControl extends Component{
         });
     }
 
-    onUserRemovedFromGroup(user){
+    /*onUserRemovedFromGroup(user){
         //send post request to server and update relationship tables
         const members = this.state.members.filter(m => m.user_name !== user.user_name);
         const tmp = this.state.users_in_campus.find(u=>u.user_name === user.user_name);
@@ -86,6 +127,17 @@ class GroupControl extends Component{
         this.setState({
             members: members,
             users_in_campus: [...users_in_campus, new_user]
+        });
+    }*/
+
+    onGroupCreated(group_name){
+        const logged_in_user = this.props.user.user_name;
+        //on group created pass username to server
+        //send group_name
+        const group_id = 1; //comes from the server 
+        this.setState({
+            group_id: group_id,
+            members: [...this.state.members, this.props.user]
         });
     }
 
@@ -106,10 +158,12 @@ class GroupControl extends Component{
     }
     render(){
         const ungrouped_users = this.state.users_in_campus.filter(u=>!u.hasGroup);
+        const show_ungrouped_users = ungrouped_users.length > 0 && this.state.members > 0;
         return(
             <div className = "group-control">
-                {this.state.members.length>0 && <GroupMembersTable members = {this.state.members} onUserRemovedFromGroup = {this.onUserRemovedFromGroup}/>}
-                {ungrouped_users.length > 0 && <UngroupedUsers onUserAddedToGroup = {this.onUserAddedToGroup} ungrouped_users = {ungrouped_users}/>}
+                {this.state.members.length<=0 && <CreateGroupForm onGroupCreated = {this.onGroupCreated}/>}
+                {this.state.members.length>0 && <GroupMembersTable members = {this.state.members}/>}
+                {show_ungrouped_users && <UngroupedUsers onUserAddedToGroup = {this.onUserAddedToGroup} ungrouped_users = {ungrouped_users}/>}
             </div>
         );
     }
