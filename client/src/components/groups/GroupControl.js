@@ -178,10 +178,20 @@ class GroupControl extends Component{
         });
     }*/
 
+    componentWillReceiveProps(props){
+        if(this.state.members.length >0){
+            const tmp = this.state.members.filter(member => member.user_name !== props.user.user_name);
+            tmp.push(props.user);
+            this.setState({
+                members: tmp
+            });
+        }
+    }
+
     onGroupCreated(group_name){
         const logged_in_user = this.props.user.user_name;
         //on group created pass username to server
-        //send group_name
+        //send group_name, user_id
         const group_id = 1; //comes from the server 
         this.setState({
             group_id: group_id,
