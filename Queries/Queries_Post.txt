@@ -14,6 +14,9 @@ VALUES (x, x);
 INSERT INTO Member_Of
 VALUES (y, SELECT MAX(G.group_ID) FROM Groups G);
 
+SELECT MAX(group_ID)
+FROM Groups
+
 #AddToGroup
 #(x, y) = (group member to add, group_ID)
 #Note: x and y can be from state
