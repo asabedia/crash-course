@@ -3,11 +3,11 @@ const mysql = require('mysql');
 const app = express();
 
 const port = 5000;
-const db_con = mysql.createConnection({
+/*const db_con = mysql.createConnection({
 	host: "localhost",
 	user: "akandada",
 	password: "Spring@*%2018"
-});
+});*/
 
 //Users
 app.get("/api/users", (req, res)=>{
@@ -36,7 +36,6 @@ app.get("/api/campuses", (req, res)=>{
     res.json(ress);
 });
 
-
 app.get("/api/groups", (req, res)=>{
 	var ress = null;
 	var params = req.params
@@ -58,7 +57,6 @@ app.get("/api/groups", (req, res)=>{
     res.json(ress);
 });
 
-
 app.get("/api/groups", (req, res)=>{
 	var ress = null;
 	db_con.query(
@@ -71,7 +69,6 @@ app.get("/api/groups", (req, res)=>{
 
     res.json(ress);
 });
-
 
 db_con.connect(
 	function(err){

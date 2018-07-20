@@ -9,7 +9,6 @@ class CampusTable extends Component{
             rows.push(
                 <tr key={campus.id}>
                     <td>{campus.name}</td>
-                    <td>{campus.address}</td>
                 </tr>
             );
         });
@@ -21,7 +20,6 @@ class CampusTable extends Component{
                     <thead>
                         <tr>
                             <th>Campus</th>
-                            <th>Address</th>
                         </tr>
                     </thead>
                     <tbody>{rows}</tbody>
@@ -45,9 +43,9 @@ class CampusControl extends Component{
         //make api request to get list of all campuses
         this.setState({
             campuses: [
-                {id: "1", name: "Waterloo", address: "12 University Ave"},
-                {id: "2", name: "Laurier", address: "8 University Ave"},
-                {id: "3", name: "UOFT", address: "123 University Ave"}]
+                {id: "1", name: "Waterloo"},
+                {id: "2", name: "Laurier"},
+                {id: "3", name: "UOFT"}]
         });
     }
 

@@ -91,23 +91,29 @@ class UserControl extends Component{
     }
 
     onSuccessfulLogin(user){
-        console.log(user.user_name);
         this.setState({user_name: user.user_name});
     }
 
     onSuccessfulEdit(user){
         //send to webserver and update the list of users
-        console.log(user);
-        this.render();
+        const tmp = this.state.users.filter(u => user.user_name !== u.user_name);
+        tmp.push(user);
+        this.setState({
+            users: tmp
+        });
     }
 
     componentDidMount(){
+        fetch('api/users', {
+
+        });
         this.setState({
           //make api call to get users from the server
           users: [{user_name:"asabedia", password:"asdfas", first_name: "Ashkan", last_name: "Abedian", campus: "Waterloo"}]
         });
     }
     render(){
+        const user = this.state.users.find(u=> u.user_name === this.state.user_name);
         return(
             <div className = "user-dashboard">
                 {this.state.user_name === "" && <LoginControl 
@@ -118,10 +124,10 @@ class UserControl extends Component{
                 {this.state.user_name !== "" && 
                     <div>
                         <h1>User Dashboard</h1>
-                        <EditUserInfoForm user = {this.state.users.find(u=> u.user_name === this.state.user_name)} onSuccessfulEdit = {this.onSuccessfulEdit}/>
+                        <EditUserInfoForm user = {user} onSuccessfulEdit = {this.onSuccessfulEdit}/>
                         <MeetingControl/>
                         <SkillsControl/>
-                        <GroupControl user={this.state.users.find(u=> u.user_name === this.state.user_name)}/>
+                        <GroupControl user={user}/>
                     </div>
                 }
             </div>

@@ -112,6 +112,7 @@ class SkillsControl extends Component{
     }
 
     componentDidMount(){
+        //get all wants and knows for user
         this.setState({
             know: [{skill_name: "java"}, {skill_name: "python"}],
             want: [{skill_name: "node"}, {skill_name: "react"}]
