@@ -1,27 +1,22 @@
 import React, { Component } from 'react';
 import './SkillsControl.css';
+import SkillTag from './SkillTag';
 
 class KnownSkillsTable extends Component{
     render(){
         const rows = [];
         this.props.known.forEach(knownSkill => {
             rows.push(
-                <tr key= {knownSkill.skill_name}>
-                    <td>{knownSkill.skill_name}</td>
-                    <td><button onClick={() => this.props.onSkillDelete({type: "known", skill_name: knownSkill.skill_name})}>Remove</button></td>
-                </tr>
+                <li key= {knownSkill.skill_name}>
+                    <SkillTag skill_name= {knownSkill.skill_name}/>
+                    <button onClick={() => this.props.onSkillDelete({type: "known", skill_name: knownSkill.skill_name})}>Remove</button>
+                </li>
             )
         });
         return(
-            <div className="known-skills-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Known Skills</th>
-                        </tr>
-                    </thead>
-                    <tbody>{rows}</tbody>
-                </table>
+            <div className="known-skills-list">
+                <h3>Known Skills</h3>
+                <ul>{rows}</ul>
             </div>
         )
     }
@@ -32,22 +27,16 @@ class WantSkillsTable extends Component{
         const rows = [];
         this.props.want.forEach(wantedSkill => {
             rows.push(
-                <tr key= {wantedSkill.skill_name}>
-                    <td>{wantedSkill.skill_name}</td>
-                    <td><button onClick={() => this.props.onSkillDelete({type: "want", skill_name: wantedSkill.skill_name})}>Remove</button></td>
-                </tr>
+                <li key= {wantedSkill.skill_name}>
+                    <SkillTag skill_name= {wantedSkill.skill_name}/>
+                    <button onClick={() => this.props.onSkillDelete({type: "want", skill_name: wantedSkill.skill_name})}>Remove</button>
+                </li>
             )
         });
         return(
-            <div className="wanted-skills-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Wanted Skills</th>
-                        </tr>
-                    </thead>
-                    <tbody>{rows}</tbody>
-                </table>
+            <div className="wanted-skills-list">
+                <h3>Wanted Skills</h3>
+                <ul>{rows}</ul>
             </div>
         )
     }
@@ -71,15 +60,19 @@ class SkillsForm extends Component{
         this.setState({
           [name]: value
         });
-      }
+    }
 
     handleNewWant(event){
-        this.props.onNewWantSkill({skill_name: this.state.want});
+        if(this.state.want.trim() !== ""){
+            this.props.onNewWantSkill({skill_name: this.state.want});
+        }
         event.preventDefault();
     }
 
     handleNewKnown(event){
-        this.props.onNewKnowSkill({skill_name: this.state.know});
+        if(this.state.know.trim() !== ""){
+            this.props.onNewKnowSkill({skill_name: this.state.know});
+        }
         event.preventDefault();
     }
 
@@ -168,8 +161,11 @@ class SkillsControl extends Component{
         return(
             <div className = "skills">
                     <SkillsForm onNewKnowSkill = {this.onNewKnowSkill} onNewWantSkill = {this.onNewWantSkill}/>
-                    <KnownSkillsTable known = {this.state.know} onSkillDelete = {this.onSkillDelete}/>
-                    <WantSkillsTable want = {this.state.want} onSkillDelete = {this.onSkillDelete}/>
+                    <br/>
+                    <div className = "skill-tables">
+                        <KnownSkillsTable known = {this.state.know} onSkillDelete = {this.onSkillDelete}/>
+                        <WantSkillsTable want = {this.state.want} onSkillDelete = {this.onSkillDelete}/>
+                    </div>
             </div>
         );
     }

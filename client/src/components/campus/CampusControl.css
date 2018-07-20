@@ -1,0 +1,14 @@
+.campus-dashboard{
+    float: left;
+    width: auto;
+    margin: 1rem;
+}
+
+.campus-table{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.campus-table th, td{
+  padding: 8px;
+}

@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+
+#node container
+  server:
+    build: ./server
+    expose:
+      - ${APP_SERVER_PORT}
+    environment:
+      API_HOST: ${API_HOST}
+      APP_SERVER_PORT: ${APP_SERVER_PORT}
+    ports:
+      - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
+    volumes:
+      - ./server/src:/usr/src/crash-course-server/src
+    command: npm run server
+
+  #react client
+  client:
+    build: ./client
+    environment:
+      - REACT_APP_PORT=${REACT_APP_PORT}
+    expose:
+      - ${REACT_APP_PORT}
+    ports:
+      - ${REACT_APP_PORT}:${REACT_APP_PORT}
+    volumes:
+      - ./client/src:/usr/app/crash-course-client/src
+      - ./client/public:/usr/app/crash-course-client/public
+    links:
+      - server
+    command: npm run start

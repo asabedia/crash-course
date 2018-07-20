@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "client-install": "cd ../client && npm install",
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "cd ../client && npm start",
@@ -13,7 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "concurrently": "^3.6.0",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "mysql": "^2.16.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.2"

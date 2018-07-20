@@ -30,6 +30,7 @@ class LoginForm extends Component{
   render(){
     return(
       <div className="login_form">
+        <h3>Login</h3>
         <form onSubmit={this.handleLogin}>
           <label>
             Username:
