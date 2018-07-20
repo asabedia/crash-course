@@ -9,12 +9,67 @@ const db_con = mysql.createConnection({
 	password: "Spring@*%2018"
 });
 
+//Users
 app.get("/api/users", (req, res)=>{
-    const users = [
-        {id: 1, firstName: 'John', lastName: 'Smith'},
-        {id: 2, firstName: 'Jimmy', lastName: 'Smith'}
-    ]
-    res.json(users);
+	var ress = null;
+	db_con.query(
+		"SELECT * FROM Users",
+		function(err, results){
+			if(err) throw err;
+			ress = results;
+		});
+
+    res.json(ress);
+});
+
+//Campuses
+app.get("/api/campuses", (req, res)=>{
+	var ress = null;
+	db_con.query(
+		`SELECT * 
+		FROM Campuses`,
+		function(err, results){
+			if(err) throw err;
+			ress = results;
+		});
+
+    res.json(ress);
+});
+
+
+app.get("/api/groups", (req, res)=>{
+	var ress = null;
+	var params = req.params
+	db_con.query(
+		`SELECT DISTINCT A.group_ID, B.skill_name, "Wants" AS "Knows_OR_Wants"
+		FROM Member_Of AS A NATURAL JOIN Wants_To_Learn AS B NATURAL JOIN Users U
+		WHERE U.campus_name = ?
+		UNION
+		SELECT DISTINCT A.group_ID, C.skill_name, "Knows" AS "Knows_OR_Wants"
+		FROM Member_Of AS A NATURAL JOIN Teaches AS C NATURAL JOIN Users U
+		WHERE U.campus_name = ?`,
+		params.campus_name,
+		params.campus_name,
+		function(err, results){
+			if(err) throw err;
+			ress = results;
+		});
+
+    res.json(ress);
+});
+
+
+app.get("/api/groups", (req, res)=>{
+	var ress = null;
+	db_con.query(
+		`SELECT * 
+		FROM Campuses`,
+		function(err, results){
+			if(err) throw err;
+			ress = results;
+		});
+
+    res.json(ress);
 });
 
 
