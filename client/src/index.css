@@ -2,6 +2,7 @@ body {
   margin: auto;
   padding: 0;
   font-family: sans-serif;
+  background: beige;
 }
 ul {
   list-style: none;

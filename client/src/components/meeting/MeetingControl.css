@@ -1,7 +1,12 @@
 .upcoming-meetings{
     float: left;
-    width: 100%;
+    width: 50%;
     padding-bottom: 4px;
+}
+
+.create-meeting-form{
+    float: left;
+    width: 50%;
 }
 
 .meetings-table{
