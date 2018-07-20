@@ -96,6 +96,13 @@ class UserControl extends Component{
 
     onSuccessfulEdit(user){
         //send to webserver and update the list of users
+        fetch("/user/"+user.user_name, {
+            method: "POST",
+            body: JSON.stringify(user),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+        .catch(err=> console.error(err))
+        .then(response => console.log(response));
         const tmp = this.state.users.filter(u => user.user_name !== u.user_name);
         tmp.push(user);
         this.setState({
@@ -104,13 +111,14 @@ class UserControl extends Component{
     }
 
     componentDidMount(){
-        fetch('api/users', {
-
-        });
+        let users = [];
+        fetch('/users').then(results =>{
+            return results.json();
+        }).then(user => users.push(user));
         this.setState({
-          //make api call to get users from the server
-          users: [{user_name:"asabedia", password:"asdfas", first_name: "Ashkan", last_name: "Abedian", campus: "Waterloo", group_id: "1"}]
+          users: users
         });
+        console.log(this.state.users);
     }
     render(){
         const user = this.state.users.find(u=> u.user_name === this.state.user_name);

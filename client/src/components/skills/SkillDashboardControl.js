@@ -43,11 +43,13 @@ class SkillDashboardControl extends Component{
 
     componentDidMount(){
         //fetch skill aggregates from web server
+        let skills = [];
+        fetch('/skills/counts')
+        .then(results => {
+            return results.json();
+        }).then(skill => skills.push(skill));
         this.setState({
-            skill_aggregates:[
-                {skill_name: "Java", know_num: 20, want_num: 10},
-                {skill_name: "Python", know_num: 8, want_num: 25},
-                {skill_name: "C#", know_num: 2, want_num: 9}]
+            skill_aggregates: skills
         });
     }
 

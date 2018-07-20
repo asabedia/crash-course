@@ -41,11 +41,12 @@ class CampusControl extends Component{
 
     componentDidMount(){
         //make api request to get list of all campuses
+        let campuses = [];
+        fetch('/campuses').then(results =>{
+            return results.json();
+        }).then(campus => campuses.push(campus));
         this.setState({
-            campuses: [
-                {id: "1", name: "Waterloo"},
-                {id: "2", name: "Laurier"},
-                {id: "3", name: "UOFT"}]
+            campuses: campuses
         });
     }
 

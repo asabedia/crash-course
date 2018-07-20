@@ -113,9 +113,18 @@ class SkillsControl extends Component{
 
     componentDidMount(){
         //get all wants and knows for user
+        let wants = [];
+        let knows =[];
+        fetch('/users/'+ this.props.user.username + '/skills/want')
+        .then(results => {return results.json()})
+        .then(skill => wants.push(skill));
+
+        fetch('/users/'+ this.props.user.username + '/skills/know')
+        .then(results => {return results.json()})
+        .then(skill => knows.push(skill));
         this.setState({
-            know: [{skill_name: "java"}, {skill_name: "python"}],
-            want: [{skill_name: "node"}, {skill_name: "react"}]
+            know: knows,
+            want: wants
         });
     }
 
@@ -126,6 +135,17 @@ class SkillsControl extends Component{
                 want: [...this.state.want, skill]
             });
             //send to database backend will deal with global duplication
+            fetch("/skills/knows", {
+                method: "POST",
+                body: JSON.stringify(
+                    {
+                        username: this.props.user.user_name,
+                        skill_name: skill.skill_name
+                    }),
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+            .catch(err=> console.error(err))
+            .then(response => console.log(response));
         }
     }
 
@@ -136,6 +156,17 @@ class SkillsControl extends Component{
                 know: [...this.state.know, skill]
             });
             //send to database backend will deal with global duplication
+            fetch("/skills/wants", {
+                method: "POST",
+                body: JSON.stringify(
+                    {
+                        username: this.props.user.user_name,
+                        skill_name: skill.skill_name
+                    }),
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+            .catch(err=> console.error(err))
+            .then(response => console.log(response));
         }
     }
 
@@ -148,6 +179,18 @@ class SkillsControl extends Component{
             this.setState({
                 know: newKnowList
             });
+            fetch("/skills/delete", {
+                method: "POST",
+                body: JSON.stringify(
+                    {
+                        username: this.props.user.user_name,
+                        skill_name: skill.skill_name,
+                        table: "Teaches"
+                    }),
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+            .catch(err=> console.error(err))
+            .then(response => console.log(response));
         }else if(type === "want"){
             //send to server and update live
             const nameToBeDeleted = deleteEvent.skill_name;
@@ -155,6 +198,18 @@ class SkillsControl extends Component{
             this.setState({
                 want: newWantList
             });
+            fetch("/skills/delete", {
+                method: "POST",
+                body: JSON.stringify(
+                    {
+                        username: this.props.user.user_name,
+                        skill_name: skill.skill_name,
+                        table: "Wants_To_Learn"
+                    }),
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+            .catch(err=> console.error(err))
+            .then(response => console.log(response));
         }
     }
 
