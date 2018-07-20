@@ -1,67 +1,55 @@
+
+#Users----
+
 #getUserInfo
+#/users/:id
 #x = username
-SELECT UMG.username, UMG.first_name, UMG.last_name, UMG.title
+SELECT UMG.username, UMG.first_name, UMG.last_name, UMG.campus_name, UMG.group_ID
 FROM (Users NATURAL JOIN Member_Of NATURAL JOIN Groups) AS UMG
 WHERE UMG.username = x
 
-#getCampuses (Id, name)
-SELECT *
-FROM Campuses
-
-#getMembersForGivenGroupID
-#x = given_groupID
-SELECT U.username
-FROM Users U NATURAL JOIN Member_Of M
-WHERE M.group_ID = x
-
-
-#getWantsAndKnowsForUsers
-
+#getWantsAndKnowsForUser
+#/users/:id/skills
+SELECT W.skill_name, "Wants" AS "Wants_OR_Knows"
+FROM Wants_To_Learn W
+WHERE W.username = ?
+UNION
+SELECT T.skill_name, "Knows" AS "Wants_OR_Knows"
+FROM Teaches T
+WHERE T.username = ?
 
 
 #getAllUsers
+#/users
 #x = username
 SELECT *
 FROM Users
 
 #searchUsers
-
+#/users?
 SELECT U.username, U.first_name, U.last_name
 FROM Users U
 WHERE U.campus_name = x
 
-#getGroupMembers
-#x = username
-SELECT M.username, U.first_name, U.last_name
+#Campus-------
+
+#getCampuses (Id, name)
+#/campuses
+SELECT *
+FROM Campuses
+
+
+#group------
+
+#getMembersForGivenGroupID
+#/groups/:id/users
+#x = given_groupID
+SELECT U.username
 FROM Users U NATURAL JOIN Member_Of M
-WHERE M.group_ID IN(
-SELECT M2.group_ID
-FROM Member_Of M2
-WHERE M2.username = x)
-
-#getMeeting
-#(x1, x2) = (current time, username)
-SELECT T.start_date_time, T.end_date_time, T.location, T.title, T.name
-FROM (Meetings NATURAL JOIN Groups NATURAL JOIN Topics) AS T
-WHERE T.start_date_time > x1 AND T.title IN(
-SELECT M.title
-FROM Member_Of M
-WHERE M.username = x2)
-
-#skillCount Wants to learn ---------UNFINISHED combine with teaches!!
-# x = number of counts (default 0)
-SELECT COUNT(W.username), W.name
-FROM Wants_To_Learn
-GROUP BY W.name
-HAVING COUNT(W.name) > x
-
-#skillCount Teaches
-SELECT COUNT(W.username), W.name
-FROM Teaches
-GROUP BY W.name
-HAVING COUNT(W.name) > x
+WHERE M.group_ID = x
 
 #GetWantsAndKnowsForGroups
+#/groups/skills
 --all groups that exist in campus
 --get all wants and all knowns
 
@@ -72,5 +60,48 @@ UNION
 SELECT DISTINCT A.group_ID, C.skill_name, "Knows" AS "Knows_OR_Wants"
 FROM Member_Of AS A NATURAL JOIN Teaches AS C NATURAL JOIN Users U
 WHERE U.campus_name = x
+
+
+#getGroupMembers UNNCESSARY
+#/users/:id/groups  ???? Is this redundant with /groups/:id/users
+#x = username
+SELECT M.username, U.first_name, U.last_name
+FROM Users U NATURAL JOIN Member_Of M
+WHERE M.group_ID IN(
+SELECT M2.group_ID
+FROM Member_Of M2
+WHERE M2.username = x)
+
+
+-----------Complete below
+
+#getMeeting
+#/groups/:id/meetings OR [not preferred: /users/:id/meetings]
+#(x1) = (username)
+SELECT M.start_date_time, M.end_date_time, M.location, M.title, T.name
+FROM Meetings M NATURAL JOIN Topics T
+WHERE M.start_date_time > CURRENT_TIMESTAMP AND M.group_ID IN(
+SELECT M2.group_ID
+FROM Member_Of M2
+WHERE M2.username = x)
+
+
+#Skills Dashboard-------
+#/skillcounts
+#skillCount Wants to learn ---------UNFINISHED combine with teaches!!
+# x = number of counts (default 0)
+SELECT COUNT(W.username), W.name, "Wants" AS "Wants_OR_Knows"
+FROM Wants_To_Learn
+GROUP BY W.name
+HAVING COUNT(W.name) > x
+
+UNION
+#skillCount Teaches
+SELECT COUNT(W.username), W.name, "Knows" AS "Wants_OR_Knows"
+FROM Teaches
+GROUP BY W.name
+HAVING COUNT(W.name) > x
+
+
 
 

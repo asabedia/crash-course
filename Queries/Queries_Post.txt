@@ -1,9 +1,10 @@
-#CreateUser
+#.put /users
 
 INSERT INTO Users
 VALUES (username, first_name, last_name, campus_name, password);
 
-#CreateNewGroup
+#CreateNewGroup 
+#.put /groups
 #(x, x) = (group title, campus <-- {FromState})
 #(y) = (username <-- {FromState})
 #Returns group_ID for state
@@ -11,20 +12,27 @@ VALUES (username, first_name, last_name, campus_name, password);
 INSERT INTO Groups (title, campus_name)
 VALUES (x, x);
 
-INSERT INTO Member_Of
-VALUES (y, SELECT MAX(G.group_ID) FROM Groups G);
+INSERT INTO Member_Of(username, group_ID)
+SELECT y, MAX(G.group_ID)
+FROM Groups G;
 
 SELECT MAX(group_ID)
-FROM Groups
+FROM Groups;
 
-#AddToGroup
-#(x, y) = (group member to add, group_ID)
-#Note: x and y can be from state
+#AddToGroup 
+#.post /groups
+#(x, y, z) = (group member to add, group_ID, current_user)
+#Note: z and y must be from state
 
-INSERT INTO Member_Of
+SELECT M.username
+FROM Member_Of M
+WHERE M.username = z AND M.group_ID = y
+
+INSERT INTO Member_Of(username, group_ID)
 VALUES (x, y);
 
 #New Wants skill
+#.put /skills/learn
 #(x, y) = (username <-- {FromState}, skill)
 INSERT INTO Skills
 VALUES (x);
@@ -33,6 +41,7 @@ INSERT INTO Wants_To_Learn
 VALUES (x, y);
 
 #Knows Skill
+#.put /skills/know
 #(x, y) = (username <-- {FromState}, skill)
 
 INSERT INTO Skills
@@ -42,15 +51,53 @@ INSERT INTO Teaches
 VALUES (x, y);
 
 #SkillDelete
+#.delete /skills/:id
 #(x, y, z) = (username <-- FromState, skill to delete, table: Wants_To_Learn XOR Teaches)
 
 DELETE FROM z
 WHERE z.username = x AND z.name = y
 
 #UserUpdate
+.post /users/:id
 # (x, y, z) = (new firstname, new lastname, username <-- {FromState})
 UPDATE Users
 SET
 	first_name = x
 	last_name = y
 WHERE Users.username = z
+
+
+
+#Meeting-------
+#createMeeting
+#(w, x, y, z, a, b) = (group_ID, start_time, end_time,topic_name, location, meeting_title)
+#.put /meetings
+#check that start_date < end_date in node
+
+SELECT *
+FROM Meetings M
+WHERE M.end_date_time >= x AND M.start_date_time <= y AND M.location = a OR w NOT IN(
+	SELECT G.group_ID
+	FROM Groups G)
+#Above query finds any overlapping meetings and check, if not null then return error: meeting overlap
+#if all is good execute below:
+
+INSERT INTO Topics(topic_ID, name)
+VALUES (NULL, z);
+
+INSERT INTO Meetings(start_date_time, end_date_time, location, group_ID, title, topic_ID)
+SELECT x,y,a,w,b, MAX(topic_ID)
+FROM Topics;
+
+--> call .post /topics/:id/skills
+
+#Topics------
+#addSkillsToTopic
+#.post /topics/:id/skills
+# x, y = topic_ID, skill_name
+
+INSERT INTO Comprises(skill_name, topic_ID)
+VALUES (y, x);
+
+
+
