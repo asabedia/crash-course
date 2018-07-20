@@ -9,19 +9,30 @@ const port = 5000;
 const db_con = mysql.createConnection({
 	host: "localhost",
 	user: "akandada",
-	password: "Spring@*%2018"
+	password: "Spring@*%2018",
+	database: "akandada"
 });
 
 //Users GETs
 app.get("/users", (req, res)=>{
+/*
 	var QUERY =
 		`SELECT U.username, U.password, U.first_name, U.last_name, U.campus_name, M.group_ID
-		FROM Users U NATURAL JOIN Member_Of M`;
-
-	if (req.query){
-		QUERY = QUERY +
-			` WHERE U.campus_name = ?`
-		};
+		FROM Users U NATURAL JOIN Member_Of M
+		UNION
+		SELECT U.username, U.password, U.first_name, U.last_name, U.campus_name, NULL
+		FROM Users U
+		WHERE U.username NOT IN(
+			SELECT M.username
+			FROM Member_Of M)`;
+*/
+//	if (req.query){
+		QUERY = `SELECT U.username, U.password, U.first_name, U.last_name, NULL
+			FROM Users U
+			WHERE U.campus_name = ? AND U.username NOT IN(
+				SELECT M.username
+				FROM Member_Of M)`
+//		};
 
 	db_con.query(
 		QUERY,
@@ -35,11 +46,11 @@ app.get("/users", (req, res)=>{
 });
 
 app.get("/users/:id", (req, res)=>{
-	
+//fuck to me i want to die
 	db_con.query(
 		`SELECT U.username, U.password, U.first_name, U.last_name, U.campus_name, M.group_ID
 		FROM Users U NATURAL JOIN Member_Of M
-		WHERE U.username = ?`,
+		WHERE U.username = ?`
 		req.params.id,
 		function(err, results){
 			if(err) throw err;
@@ -47,21 +58,52 @@ app.get("/users/:id", (req, res)=>{
 		});
 });	
 
-app.get("/users/:id/skills", (req, res)=>{
+app.get("/users/skills", (req, res)=>{
 
-
+	var args = [req.query.campus_name, req.query.campus_name];
 	db_con.query(
-		`SELECT W.skill_name, "Wants" AS "Wants_OR_Knows"
-		FROM Wants_To_Learn W
-		WHERE W.username = ?
+		`SELECT W.username, W.skill_name, "Wants" AS "Knows_OR_Wants"
+		FROM Wants_To_Learn W NATURAL JOIN Users U
+		WHERE U.campus_name = ?
 		UNION
-		SELECT T.skill_name, "Knows" AS "Wants_OR_Knows"
+		SELECT T.username, T.skill_name, "Knows" AS "Knows_OR_Wants"
+		FROM Teaches T NATURAL JOIN Users U
+		WHERE U.campus_name = ?`,
+		args,
+		function(err, results){
+			if(err) res.send("no query specified, query requried");
+			res.json(results);
+		});
+
+    
+});
+
+app.get("/users/:id/skills/knows", (req, res)=>{
+
+	
+	db_con.query(
+		`SELECT W.skill_name
+		FROM Wants_To_Learn W
+		WHERE w.username = ?`,
+		req.params.id,
+		function(err, results){
+			if(err) console.log(err);
+			res.json(results);
+		});
+
+    
+});
+
+app.get("/users/:id/skills/wants", (req, res)=>{
+
+	
+	db_con.query(
+		`SELECT T.skill_name
 		FROM Teaches T
 		WHERE T.username = ?`,
 		req.params.id,
-		req.params.id,
 		function(err, results){
-			if(err) throw err;
+			if(err) res.send("no query specified, query requried");
 			res.json(results);
 		});
 
@@ -71,18 +113,21 @@ app.get("/users/:id/skills", (req, res)=>{
 //Users PUT/POST/DELETE
 
 app.put("/users", (req, res)=>{
+//USELESSSSSSSS
 	var values = req.body;
 	var QUERY = 
 	`INSERT INTO Users
 	VALUES (?, ?, ?, ?, ?)`;
 
-	db_con.query(
-		QUERY,
-		values.username,
+	var args = [values.username,
 		values.first_name,
 		values.last_name,
 		values.campus_name,
-		values.password,
+		values.password,];
+
+	db_con.query(
+		QUERY,
+		args,
 		function(err, results){
 			if(err) throw err;
 			res.json(results); //change?
@@ -98,12 +143,15 @@ app.post("/users/:id", (req, res)=>{
 		first_name = ?
 		last_name = ?
 	WHERE Users.username = ?`;
+
+	var args =[
+		values.first_name,
+		values.last_name,
+		req.params.username];
 	
 	db_con.query(
 		QUERY,
-		values.first_name,
-		values.last_name,
-		values.username,
+		args,
 		function(err, results){
 			if(err) throw err;
 			res.json(results); //change?
@@ -127,19 +175,21 @@ app.get("/campuses", (req, res)=>{
 });
 
 //Groups
-app.get("/groups/skills", (req, res)=>{
+app.get("/campuses/:id/groups/skills", (req, res)=>{
 
 	var params = req.params;
+	var args = [
+		params.id,
+		params.id];
 	db_con.query(
-		`SELECT DISTINCT A.group_ID, B.skill_name, "Wants" AS "Knows_OR_Wants"
-		FROM Member_Of AS A NATURAL JOIN Wants_To_Learn AS B NATURAL JOIN Users U
-		WHERE U.campus_name = ?
+		`SELECT DISTINCT A.group_ID, G.title, B.skill_name, "Wants" AS "Knows_OR_Wants"
+		FROM Member_Of AS A NATURAL JOIN Wants_To_Learn AS B NATURAL JOIN Groups G
+		WHERE G.campus_name = ?
 		UNION
-		SELECT DISTINCT A.group_ID, C.skill_name, "Knows" AS "Knows_OR_Wants"
-		FROM Member_Of AS A NATURAL JOIN Teaches AS C NATURAL JOIN Users U
-		WHERE U.campus_name = ?`,
-		params.campus_name,
-		params.campus_name,
+		SELECT DISTINCT A.group_ID, G.title, C.skill_name, "Knows" AS "Knows_OR_Wants"
+		FROM Member_Of AS A NATURAL JOIN Teaches AS C NATURAL JOIN Groups G
+		WHERE G.campus_name = ?`,
+		args,
 		function(err, results){
 			if(err) throw err;
 			res.json(results);
@@ -148,15 +198,30 @@ app.get("/groups/skills", (req, res)=>{
     
 });
 
+app.get("/groups/:id/skills", (req, res)=>{
+	
+	var group_ID = req.paramas.id;
+	
+	db_con.query(
+		`SELECT DISTINCT S.skill_name
+		FROM Wants_To_Learn UNION Teaches AS S
+		WHERE S.group_ID = ?`
+	
+
 
 app.get("/groups/:id/users", (req, res)=>{
 	
-	params = req.params;
+	args = [req.params.id,
+		req.params.id];
 	db_con.query(
-		`SELECT U.username
-		FROM Users U NATURAL JOIN Member_Of M
+		`SELECT DISTINCT W.skill_name
+		FROM Wants_To_Learn W NATURAL JOIN Member_Of M
+		WHERE M.group_ID = ?
+		UNION
+		SELECT DISTINCT T.skill_name
+		FROM Teaches T NATURAL JOIN Member_Of M
 		WHERE M.group_ID = ?`,
-		params.id,
+		args,
 		function(err, results){
 			if(err) throw err;
 			res.json(results);
@@ -176,12 +241,13 @@ app.put("/groups", (req, res)=>{
 		FROM Groups;`;
 
 	var values = req.body;
-
-	db_con.query(
-		QUERY,
+	var args = [
 		values.group_title,
 		values.campus_name,
-		values.username,
+		values.username];
+	db_con.query(
+		QUERY,
+		args,
 		function(err, results){
 			if(err) throw err;
 			res.json(results);
@@ -191,22 +257,17 @@ app.put("/groups", (req, res)=>{
 
 });
 
-app.post("/groups", (req, res)=>{
+app.post("/groups/:id", (req, res)=>{
 	var QUERY =
-		`SELECT M.username
-		FROM Member_Of M
-		WHERE M.username = ? AND M.group_ID = ?;
-
-		INSERT INTO Member_Of(username, group_ID)
+		`INSERT INTO Member_Of(username, group_ID)
 		VALUES (?, ?);`;
 	var values = req.body;
-
+	var args = [
+		values.username,
+		req.params.id]
 	db_con.query(
 		QUERY,
-		values.username,
-		values.group_ID,
-		values.member_username,
-		values.group_ID,
+		args,
 		function(err, results){
 			if(err) throw err;
 			res.json(results);
@@ -219,7 +280,7 @@ app.post("/groups", (req, res)=>{
 
 //skills
 
-app.get("/skillcounts", (req, res)=>{
+app.get("/skills/counts", (req, res)=>{
 	var QUERY =
 		`SELECT COUNT(W.username), W.name, "Wants" AS "Wants_OR_Knows"
 		FROM Wants_To_Learn
@@ -232,11 +293,13 @@ app.get("/skillcounts", (req, res)=>{
 		FROM Teaches
 		GROUP BY W.name
 		HAVING COUNT(W.name) > ?`;
-
+	var args = [
+		req.params.count,
+		req.params.count];
+	
 	db_con.query(
 		QUERY,
-		req.params.count,
-		req.params.count,
+		args,
 		function(err, results){
 			if(err) throw err;
 			res.json(results);
@@ -247,22 +310,24 @@ app.get("/skillcounts", (req, res)=>{
 });
 
 
-app.put("/skills/learn", (req, res)=>{
+app.put("/skills/wants", (req, res)=>{
 	var QUERY =
 		`INSERT INTO Skills
 		VALUES (?);
-		INSERT INTO Teaches
+		INSERT INTO Wants_To_Learn
 		VALUES (?, ?);`;
 
 	var values = req.body;
+	var args = [
+		values.skill_name,
+		values.skill_name,
+		values.username];
 
 	db_con.query(
 		QUERY,
-		values.skill_name,
-		values.skill_name,
-		values.username,
+		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});	
 
@@ -270,7 +335,7 @@ app.put("/skills/learn", (req, res)=>{
 
 });
 
-app.put("/skills/know", (req, res)=>{
+app.put("/skills/knows", (req, res)=>{
 	var QUERY =
 		`INSERT INTO Skills
 		VALUES (?);
@@ -279,14 +344,16 @@ app.put("/skills/know", (req, res)=>{
 		VALUES (?, ?);`;
 
 	var values = req.body;
+	var args = [
+		values.skill_name,
+		values.skill_name,
+		values.username];
 
 	db_con.query(
 		QUERY,
-		values.skill_name,
-		values.skill_name,
-		values.username,
+		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});	
 
@@ -295,7 +362,7 @@ app.put("/skills/know", (req, res)=>{
 });
 
 
-app.delete("/skills/:id", (req, res)=>{
+app.post("/skills/delete", (req, res)=>{
 	//check that the call passes table properly
 	//table must be: Teaches XOR Wants_To_Learn
 	var QUERY =
@@ -303,14 +370,16 @@ app.delete("/skills/:id", (req, res)=>{
 		WHERE ?.username = ? AND ?.name = ?`;
 
 	var values = req.body;
-
-	db_con.query(
-		QUERY,
+	var args =[
 		values.table,
 		values.table,
 		values.username,
 		values.table,
-		values.skill_name,
+		values.skill_name];
+
+	db_con.query(
+		QUERY,
+		args,
 		function(err, results){
 			if(err) throw err;
 			res.json(results);
@@ -337,13 +406,16 @@ app.get("/groups/:id/meetings", (req, res)=>{
 
 	var values = req.body;
 
-	db_con.query(
-		QUERY,
+	var args = [
 		values.table,
 		values.table,
 		values.username,
 		values.table,
-		values.skill_name,
+		values.skill_name];
+
+	db_con.query(
+		QUERY,
+		args,
 		function(err, results){
 			if(err) throw err;
 			res.json(results);
@@ -354,7 +426,7 @@ app.get("/groups/:id/meetings", (req, res)=>{
 });
 
 
-app.put("/meetings", (req, res)=>{
+app.put("/groups/:id/meetings", (req, res)=>{
 
 	var data_check_query =
 		`SELECT *
@@ -369,12 +441,15 @@ app.put("/meetings", (req, res)=>{
 		res.send("Bad meeting time: meeting cannot start time cannot be after meeting end time");
 	}
 
-	db_con.query(
-		data_check_query,
+	var check1_args = [
 		values.start_date_time,
 		values.end_date_time,
 		values.location,
-		values.group_ID,
+		req.params.id];
+	
+	db_con.query(
+		data_check_query,
+		check1_args,
 		function(err, results){
 			if(err) throw err;
 			if(results){
@@ -392,14 +467,17 @@ app.put("/meetings", (req, res)=>{
 		SELECT ?,?,?,?,?, MAX(topic_ID)
 		FROM Topics;`
 	
-	db_con.query(
-		data_check_query,
+	check2_args = [
 		values.topic_name,
 		values.start_date_time,
 		values.end_date_time,
 		values.location,
-		values.group_ID,
-		values.meeting_title,
+		req.params.id,
+		values.meeting_title];
+
+	db_con.query(
+		data_check_query,
+		check2_args,
 		function(err, results){
 			if(err) throw err;
 			res.send('success');
@@ -408,11 +486,12 @@ app.put("/meetings", (req, res)=>{
 
 	var i;
 	for (i=0; i < values.skill_names.length; i++){
+		var args = [values.skill_names[i],values.topic_ID];
 		db_con.query(
 			`INSERT INTO Comprises(skill_name, topic_ID)
-			VALUES (?, ?);`,
-			values.skill_names[i],
-			values.topic_ID,
+			SELECT ?, MAX(T.topic_ID)
+			FROM Topics T;`,
+			args,
 			function(err, results){
 				if(err) throw err;
 			});
