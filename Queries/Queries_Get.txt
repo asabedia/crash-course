@@ -4,20 +4,40 @@ SELECT UMG.username, UMG.first_name, UMG.last_name, UMG.title
 FROM (Users NATURAL JOIN Member_Of NATURAL JOIN Groups) AS UMG
 WHERE UMG.username = x
 
+#getCampuses (Id, name)
+SELECT *
+FROM Campuses
+
+#getMembersForGivenGroupID
+#x = given_groupID
+SELECT U.username
+FROM Users U NATURAL JOIN Member_Of M
+WHERE M.group_ID = x
+
+
+#getWantsAndKnowsForUsers
+
+
+
+#getAllUsers
+#x = username
+SELECT *
+FROM Users
+
 #searchUsers
 
 SELECT U.username, U.first_name, U.last_name
 FROM Users U
 WHERE U.campus_name = x
 
-#getGroup
+#getGroupMembers
 #x = username
-SELECT U.username, U.first_name, U.last_name
-FROM (Users NATURAL JOIN Member_Of) AS U
-WHERE U.title IN(
-SELECT M.title
-FROM Member_Of M
-WHERE M.username = x)
+SELECT M.username, U.first_name, U.last_name
+FROM Users U NATURAL JOIN Member_Of M
+WHERE M.group_ID IN(
+SELECT M2.group_ID
+FROM Member_Of M2
+WHERE M2.username = x)
 
 #getMeeting
 #(x1, x2) = (current time, username)
@@ -28,7 +48,7 @@ SELECT M.title
 FROM Member_Of M
 WHERE M.username = x2)
 
-#skillCount Wants to learn
+#skillCount Wants to learn ---------UNFINISHED combine with teaches!!
 # x = number of counts (default 0)
 SELECT COUNT(W.username), W.name
 FROM Wants_To_Learn
@@ -45,16 +65,12 @@ HAVING COUNT(W.name) > x
 --all groups that exist in campus
 --get all wants and all knowns
 
-SELECT G.group_ID, G.title, W.name
-FROM Groups G, Wants_To_Learn W
-WHERE G.campus_name = x
-
-SELECT DISTINCT W.name, M.group_ID
-FROM Wants_To_Learn W
-WHERE W.username IN(
-	SELECT M.username
-	FROM Member_Of M
-	)
-#----------TEST THIS!!!!
+SELECT DISTINCT A.group_ID, B.skill_name, "Wants" AS "Knows_OR_Wants"
+FROM Member_Of AS A NATURAL JOIN Wants_To_Learn AS B NATURAL JOIN Users U
+WHERE U.campus_name = x
+UNION
+SELECT DISTINCT A.group_ID, C.skill_name, "Knows" AS "Knows_OR_Wants"
+FROM Member_Of AS A NATURAL JOIN Teaches AS C NATURAL JOIN Users U
+WHERE U.campus_name = x
 
 

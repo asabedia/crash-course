@@ -3,11 +3,11 @@ const express = require('express');
 const app = express();
 
 const port = 5000;
-/*const db_con = mysql.createConnection({
+const db_con = mysql.createConnection({
 	host: "mansci-db.uwaterloo.ca",
 	user: "akandada",
 	password: "Anant2018!"
-});*/
+});
 
 app.get("/api/users", (req, res)=>{
     const users = [
@@ -16,6 +16,17 @@ app.get("/api/users", (req, res)=>{
     ]
     res.json(users);
 });
+
+
+
+
+
+db_con.connect(
+	function(err) {
+  	if (err) throw err;
+	console.log("Connected to Database!");
+	}
+)
 
 app.listen(port, () => console.log('server started'));
 
