@@ -109,7 +109,7 @@ class UserControl extends Component{
         });
         this.setState({
           //make api call to get users from the server
-          users: [{user_name:"asabedia", password:"asdfas", first_name: "Ashkan", last_name: "Abedian", campus: "Waterloo"}]
+          users: [{user_name:"asabedia", password:"asdfas", first_name: "Ashkan", last_name: "Abedian", campus: "Waterloo", group_id: "1"}]
         });
     }
     render(){
@@ -125,8 +125,8 @@ class UserControl extends Component{
                     <div>
                         <h1>User Dashboard</h1>
                         <EditUserInfoForm user = {user} onSuccessfulEdit = {this.onSuccessfulEdit}/>
-                        <MeetingControl/>
-                        <SkillsControl/>
+                        <MeetingControl user = {user}/>
+                        <SkillsControl user = {user}/>
                         <GroupControl user={user}/>
                     </div>
                 }
