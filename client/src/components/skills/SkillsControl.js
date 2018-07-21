@@ -184,7 +184,7 @@ class SkillsControl extends Component{
                 body: JSON.stringify(
                     {
                         username: this.props.user.user_name,
-                        skill_name: skill.skill_name,
+                        skill_name: nameToBeDeleted,
                         table: "Teaches"
                     }),
                 headers: {'Content-Type': 'application/json'}
@@ -203,7 +203,7 @@ class SkillsControl extends Component{
                 body: JSON.stringify(
                     {
                         username: this.props.user.user_name,
-                        skill_name: skill.skill_name,
+                        skill_name: nameToBeDeleted.skill_name,
                         table: "Wants_To_Learn"
                     }),
                 headers: {'Content-Type': 'application/json'}

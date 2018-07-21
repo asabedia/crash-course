@@ -190,6 +190,7 @@ class GroupControl extends Component{
         const logged_in_user = this.props.user.user_name;
         //on group created pass username to server
         //send group_name, user_id
+        let group_ID = "";
         fetch("/groups", {
             method: "PUT",
             body: JSON.stringify(
@@ -201,7 +202,7 @@ class GroupControl extends Component{
             headers: {'Content-Type': 'application/json'}
         }).then(res => res.json())
         .catch(err=> console.error(err))
-        .then(response => group_ID = response.group_ID);
+        .then(response => {group_ID = response.group_ID});
         this.setState({
             group_ID: group_ID,
             group_name: group_name,
@@ -253,7 +254,7 @@ class GroupControl extends Component{
         distinct_users.forEach(username=>{
             const user = users.find(u => u.username === username);
             let knowns = users.filter(u => u.username === username && u.Knows_OR_Wants === "Knows").map(u => {return u.skill_name});
-            let wants = groups.filter(g => u.username === username && u.Knows_OR_Wants === "Wants").map(u => {return u.skill_name});
+            let wants = users.filter(u => u.username === username && u.Knows_OR_Wants === "Wants").map(u => {return u.skill_name});
 
             users_with_skills.push({
                 user_name: username,
