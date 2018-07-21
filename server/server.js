@@ -15,7 +15,7 @@ const db_con = mysql.createConnection({
 
 //Users GETs
 app.get("/users", (req, res)=>{
-/*
+
 	var QUERY =
 		`SELECT U.username, U.password, U.first_name, U.last_name, U.campus_name, M.group_ID
 		FROM Users U NATURAL JOIN Member_Of M
@@ -25,20 +25,21 @@ app.get("/users", (req, res)=>{
 		WHERE U.username NOT IN(
 			SELECT M.username
 			FROM Member_Of M)`;
-*/
-//	if (req.query){
-		QUERY = `SELECT U.username, U.password, U.first_name, U.last_name, NULL
+
+
+	if (req.query.campus_name){
+		QUERY = `SELECT U.username, U.password, U.first_name, U.last_name
 			FROM Users U
 			WHERE U.campus_name = ? AND U.username NOT IN(
 				SELECT M.username
-				FROM Member_Of M)`
-//		};
+				FROM Member_Of M)`;
+		};
 
 	db_con.query(
 		QUERY,
 		req.query.campus_name,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});
 
@@ -46,14 +47,14 @@ app.get("/users", (req, res)=>{
 });
 
 app.get("/users/:id", (req, res)=>{
-//fuck to me i want to die
+//not needed for now
 	db_con.query(
 		`SELECT U.username, U.password, U.first_name, U.last_name, U.campus_name, M.group_ID
 		FROM Users U NATURAL JOIN Member_Of M
 		WHERE U.username = ?`
 		req.params.id,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});
 });	
@@ -129,7 +130,7 @@ app.put("/users", (req, res)=>{
 		QUERY,
 		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results); //change?
 		});
 
@@ -153,7 +154,7 @@ app.post("/users/:id", (req, res)=>{
 		QUERY,
 		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results); //change?
 		});
 
@@ -163,12 +164,12 @@ app.post("/users/:id", (req, res)=>{
 
 //Campuses
 app.get("/campuses", (req, res)=>{
-	var ress = "default value";
+
 	db_con.query(
 		`SELECT * 
 		FROM Campuses`,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			   res.json(ress);
 		});
 
@@ -191,25 +192,16 @@ app.get("/campuses/:id/groups/skills", (req, res)=>{
 		WHERE G.campus_name = ?`,
 		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});
 
     
 });
 
+
+
 app.get("/groups/:id/skills", (req, res)=>{
-	
-	var group_ID = req.paramas.id;
-	
-	db_con.query(
-		`SELECT DISTINCT S.skill_name
-		FROM Wants_To_Learn UNION Teaches AS S
-		WHERE S.group_ID = ?`
-	
-
-
-app.get("/groups/:id/users", (req, res)=>{
 	
 	args = [req.params.id,
 		req.params.id];
@@ -223,7 +215,7 @@ app.get("/groups/:id/users", (req, res)=>{
 		WHERE M.group_ID = ?`,
 		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});
 });
@@ -249,7 +241,7 @@ app.put("/groups", (req, res)=>{
 		QUERY,
 		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});	
 
@@ -269,7 +261,7 @@ app.post("/groups/:id", (req, res)=>{
 		QUERY,
 		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});
 
@@ -282,26 +274,26 @@ app.post("/groups/:id", (req, res)=>{
 
 app.get("/skills/counts", (req, res)=>{
 	var QUERY =
-		`SELECT COUNT(W.username), W.name, "Wants" AS "Wants_OR_Knows"
-		FROM Wants_To_Learn
-		GROUP BY W.name
-		HAVING COUNT(W.name) > ?
+		`SELECT COUNT(W.username) AS "count", W.skill_name, "Wants" AS "Wants_OR_Knows"
+		FROM Wants_To_Learn W
+		GROUP BY W.skill_name
+		HAVING COUNT(W.skill_name) >= ?
 
 		UNION
 		#skillCount Teaches
-		SELECT COUNT(W.username), W.name, "Knows" AS "Wants_OR_Knows"
-		FROM Teaches
-		GROUP BY W.name
-		HAVING COUNT(W.name) > ?`;
+		SELECT COUNT(T.username), T.skill_name, "Knows" AS "Wants_OR_Knows"
+		FROM Teaches T
+		GROUP BY T.skill_name
+		HAVING COUNT(T.skill_name) >= ?`;
 	var args = [
-		req.params.count,
-		req.params.count];
+		req.query.count,
+		req.query.count];
 	
 	db_con.query(
 		QUERY,
 		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});
 
@@ -381,7 +373,7 @@ app.post("/skills/delete", (req, res)=>{
 		QUERY,
 		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});	
 
@@ -392,7 +384,7 @@ app.post("/skills/delete", (req, res)=>{
 
 //meetings
 
-app.get("/groups/:id/meetings", (req, res)=>{
+app.get("/users/:id/meetings", (req, res)=>{
 //!!!!!!!! This does not work atm
 //will only work if query is changed (inner query removed) or URI is /users/:id/meetings
 
@@ -417,7 +409,7 @@ app.get("/groups/:id/meetings", (req, res)=>{
 		QUERY,
 		args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(results);
 		});	
 
@@ -451,7 +443,7 @@ app.put("/groups/:id/meetings", (req, res)=>{
 		data_check_query,
 		check1_args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			if(results){
 				res.send("Meeting conflict or bad group_ID"); //make proper error?
 			};
@@ -479,7 +471,7 @@ app.put("/groups/:id/meetings", (req, res)=>{
 		data_check_query,
 		check2_args,
 		function(err, results){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.send('success');
 		});
 
@@ -493,7 +485,7 @@ app.put("/groups/:id/meetings", (req, res)=>{
 			FROM Topics T;`,
 			args,
 			function(err, results){
-				if(err) throw err;
+				if(err) console.log(err);
 			});
 	}
 
@@ -517,7 +509,7 @@ app.post("/topics/:id/skills", (req,res)=>{
 			values.skill_names[i],
 			values.topic_ID,
 			function(err, results){
-				if(err) throw err;
+				if(err) console.log(err);
 			});
 	}
 
