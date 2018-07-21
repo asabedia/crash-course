@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import TopicControl from '../topic/TopicControl';
 import './MeetingControl.css';
 
 class CreateMeetingForm extends Component{
     constructor(props){
         super(props);
         this.state = {
-            topic_name:"",
+            name:"",
             skills:[],
             meeting_name: "",
             start_date:"",
@@ -29,15 +28,14 @@ class CreateMeetingForm extends Component{
     }
 
     onHandleSubmit(event){
-        if(this.state.topic_name.trim() !== "" && this.state.start_date.trim() !== ""
+        if(this.state.name.trim() !== "" && this.state.start_date.trim() !== ""
             && this.state.meeting_name.trim() !== "" && this.state.start_time.trim() !== ""
             && this.state.location.trim() !== "" && this.state.end_date.trim() !== ""
             && this.state.end_time.trim() !== ""){
             const topic = {
-                topic_name: this.state.topic_name,
+                name: this.state.name,
                 skills: this.state.skills
             }
-            //send topic to db 
             const meeting = {
                 topic: topic, 
                 meeting_name: this.state.meeting_name,
@@ -71,7 +69,7 @@ class CreateMeetingForm extends Component{
                     <br/>
                     <label>
                         Topic Name:
-                        <input onChange = {this.handleInputChange} name = "topic_name" type = "text" value = {this.state.topic_name}/>
+                        <input onChange = {this.handleInputChange} name = "name" type = "text" value = {this.state.name}/>
                     </label>
                     <br/>
                     <label>
@@ -124,9 +122,9 @@ class MeetingsTable extends Component{
         const rows = [];
         this.props.meetings.forEach(meeting => {
             rows.push(
-                <tr key={meeting.id}>
+                <tr key={meeting.start + meeting.end + meeting.location}>
                     <td>{meeting.title}</td>
-                    <td>{meeting.topic_name}</td>
+                    <td>{meeting.name}</td>
                     <td>{meeting.location}</td>
                     <td>{meeting.start}</td>
                     <td>{meeting.end}</td>
@@ -159,31 +157,50 @@ class MeetingControl extends Component{
     constructor(props){
         super(props);
         this.state = {
-            meetings: []
+            meetings: [],
+            skills : []
         }
         this.onNewMeeting = this.onNewMeeting.bind(this);
     }
 
     onNewMeeting(meeting){
         //send meeting to db
+        const group_id = this.props.user.group_id;
         const meeting_with_group_id = {
-            group_id: this.props.user.group_id,
-            meeting_name: meeting.meeting_name,
+            group_ID: group_id,
+            meeting_title: meeting.meeting_name,
             location: meeting.location,
-            topic: meeting.topic,
+            topic_name: meeting.topic,
             start_date_time: meeting.start_date_time, 
             end_date_time: meeting.end_date_time
         }
+        fetch("/groups/"+group_id+"/meetings", {
+            method: "POST",
+            body: JSON.stringify(meeting_with_group_id),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+        .catch(err=> console.error(err))
+        .then(response => this.setState({meetings: [this.state.meetings, meeting]}));
         console.log(meeting_with_group_id);
     }
 
     componentDidMount(){
         //make api call to server to fetch all meetings for user where date is in future
+        let meetings = [];
+        fetch('/users/'+this.props.user.user_name+'/meetings')
+        .then(results => {return results.json()})
+        .then(meeting => meetings.push(meeting));
         //make api call to get all skills for user's group
+        let skills = [];
+        fetch('/groups/' + this.props.user.group_ID + '/skills')
+        .then(results => {return results.json()})
+        .then(skill => skills.push(skill));
+        /*meetings: [
+                {title: "Meeting One", name: "Learning",location: "CPH 1234", start: "12:20:00 03/09/2018", end: "1:00:00 03/09/2018"},
+                {title: "Meeting Two", name: "Learning Stuff",location: "CPH 1234", start: "12:20:00 04/09/2018", end: "1:00:00 04/09/2018"}]*/
         this.setState({
-            meetings: [
-                {id:"1", title: "Meeting One", topic_name: "Learning",location: "CPH 1234", start: "12:20:00 03/09/2018", end: "1:00:00 03/09/2018"},
-                {id:"2", title: "Meeting Two", topic_name: "Learning Stuff",location: "CPH 1234", start: "12:20:00 04/09/2018", end: "1:00:00 04/09/2018"}]
+            meetings: meetings,
+            skills: skills
         });
     }
 
@@ -191,7 +208,7 @@ class MeetingControl extends Component{
         return(
             <div className = "meeting">
                 <MeetingsTable meetings = {this.state.meetings}/>
-                <CreateMeetingForm onNewMeeting = {this.onNewMeeting} skills = {[{skill_name: "Java"},{skill_name: "Python"},{skill_name: "C#"}]}/>
+                <CreateMeetingForm onNewMeeting = {this.onNewMeeting} skills = {this.state.skills}/>
             </div>
         );
     }

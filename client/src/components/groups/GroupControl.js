@@ -7,7 +7,7 @@ class GroupList extends Component{
     render(){
         const groupListItems = this.props.groups.map(group => {
             return(
-                <li className="group-list-item" key={group.group_id}>
+                <li className="group-list-item" key={group.group_ID}>
                     <Group group = {group}/>
                     <button onClick = {() => this.props.onJoinGroup(group)}>Join Group</button>
                 </li>)
@@ -142,20 +142,30 @@ class GroupControl extends Component{
     constructor(props){
         super(props);
         this.state={
-            group_id: "",
+            group_ID: "",
             group_name: "",
             groups: [],
             members:[],
             users_in_campus:[]
         }
         this.onUserAddedToGroup = this.onUserAddedToGroup.bind(this);
-        //this.onUserRemovedFromGroup = this.onUserRemovedFromGroup.bind(this);
         this.onGroupCreated = this.onGroupCreated.bind(this);
         this.onJoinGroup = this.onJoinGroup.bind(this);
     }
 
     onUserAddedToGroup(user){
-        //send post request to express server with new user_name and the group_id
+        //send post request to express server with new user_name and the group_ID
+        fetch("/groups/"+ this.state.group_ID, {
+            method: "POST",
+            body: JSON.stringify(
+                {
+                    username: user.user_name
+                }),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+        .catch(err=> console.error(err))
+        .then(response => console.log(response));
+
         const new_member = {user_name: user.user_name, first_name: user.first_name, last_name: user.last_name};
         const tmp = this.state.users_in_campus.find(u=>u.user_name === user.user_name);
         const users_in_campus = this.state.users_in_campus.filter(u => user.user_name !== u.user_name);
@@ -165,18 +175,6 @@ class GroupControl extends Component{
             users_in_campus: [...users_in_campus, new_user]
         });
     }
-
-    /*onUserRemovedFromGroup(user){
-        //send post request to server and update relationship tables
-        const members = this.state.members.filter(m => m.user_name !== user.user_name);
-        const tmp = this.state.users_in_campus.find(u=>u.user_name === user.user_name);
-        const users_in_campus = this.state.users_in_campus.filter(u => user.user_name !== u.user_name);
-        const new_user = {user_name: tmp.user_name, first_name: tmp.first_name, last_name: tmp.last_name, known: tmp.known, want: tmp.want, hasGroup: false};
-        this.setState({
-            members: members,
-            users_in_campus: [...users_in_campus, new_user]
-        });
-    }*/
 
     componentWillReceiveProps(props){
         if(this.state.members.length >0){
@@ -192,23 +190,47 @@ class GroupControl extends Component{
         const logged_in_user = this.props.user.user_name;
         //on group created pass username to server
         //send group_name, user_id
-        const group_id = 1; //comes from the server 
+        fetch("/groups", {
+            method: "PUT",
+            body: JSON.stringify(
+                {
+                    group_title: group_name,
+                    campus_name: this.props.user.campus_name,
+                    username: logged_in_user
+                }),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+        .catch(err=> console.error(err))
+        .then(response => group_ID = response.group_ID);
         this.setState({
-            group_id: group_id,
+            group_ID: group_ID,
             group_name: group_name,
             members: [...this.state.members, this.props.user]
         });
     }
 
     onJoinGroup(group){
+        //make post to send new membership
+        fetch("/groups/"+ group.group_ID, {
+            method: "POST",
+            body: JSON.stringify(
+                {
+                    username: this.props.user.user_name
+                }),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+        .catch(err=> console.error(err))
+        .then(response => console.log(response));
+
         //make api request to get the members of this group
-        const members = [
-            {user_name: "jcho", first_name: "Jony", last_name: "Cho"},
-            {user_name: "soas", first_name: "Soas", last_name: "Dopo"}]
+        let members = [];
+        fetch('/group/'+group.group_ID+'/members')
+        .then(results => {return results.json})
+        .then(member => members.push(member));
         members.push(this.props.user);
         this.setState({
             members: members,
-            group_id: group.group_id,
+            group_ID: group.group_ID,
             group_name: group.group_name
         });
     }
@@ -216,18 +238,55 @@ class GroupControl extends Component{
     componentDidMount(){
         //get group memebers from server using the username
             //need to find out what group the user is in and need all the members of that group
+        let members = [];
+        fetch('/group/' + this.props.user.group_ID + '/members')
+        .then(results => {return results.json()})
+        .then(member => members.push(member));
         //get all users who are in the same campus as this user and have no group
+        let users = [];
+        fetch('/users?campus_name='+ this.props.user.campus_name)
+        .then(results => {return results.json()})
+        .then(user => {users.push(user)});
+
+        let users_with_skills = [];
+        const distinct_users = new Set(users.map(user => {return user.username}));
+        distinct_users.forEach(username=>{
+            const user = users.find(u => u.username === username);
+            let knowns = users.filter(u => u.username === username && u.Knows_OR_Wants === "Knows").map(u => {return u.skill_name});
+            let wants = groups.filter(g => u.username === username && u.Knows_OR_Wants === "Wants").map(u => {return u.skill_name});
+
+            users_with_skills.push({
+                user_name: username,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                known: knowns,
+                want: wants
+            });
+        });
+
         //get all groups on the user's campus
-        const user_name = this.props.user.user_name;
-        const campus = this.props.user.campus;
+        let groups = [];
+        fetch('/campuses/'+ this.props.user.campus_name + '/groups/skills')
+        .then(results => {return results.json()})
+        .then(group => groups.push(group));
+
+        let groups_with_skills = [];
+        const distinct_groups = new Set(groups.map(group => {return group.group_ID}));
+        distinct_groups.forEach(group_ID => {
+            const group = groups.find(g => g.group_ID === group_ID);
+            let knowns = groups.filter(g => g.group_ID === group_ID && g.Knows_OR_Wants === "Knows").map(group => {return group.skill_name});
+            let wants = groups.filter(g => g.group_ID === group_ID && g.Knows_OR_Wants === "Wants").map(group => {return group.skill_name});
+            groups_with_skills.push({
+                group_ID: group_ID,
+                group_name: group.title,
+                known: knowns,
+                want: wants
+            });
+        });
+
         this.setState({
-            users_in_campus: [
-                {user_name: "popqe", first_name: "Edgar", last_name: "Allen Po", known: [{skill_name: "writing"}, {skill_name: "reading"}], want: [{skill_name: "python"},{skill_name: "java"}], hasGroup: false},
-                {user_name: "kirk", first_name: "Captain", last_name: "Kirk", known: [{skill_name: "piloting"}, {skill_name: "ships"}], want: [{skill_name: "dancing"},{skill_name: "bio"}], hasGroup: false}
-            ],
-            groups: [
-                {group_id: "1", group_name: "Group 1", known: [{skill_name: "java"},{skill_name: "python"}], want: [{skill_name: "c#"},{skill_name: "c++"}]},
-                {group_id: "2", group_name: "Group 2", known: [{skill_name: "c"},{skill_name: "php"}], want: [{skill_name: "java"},{skill_name: "python"}]}]
+            users_in_campus: users_with_skills,
+            groups: groups_with_skills
         });
 
     }
