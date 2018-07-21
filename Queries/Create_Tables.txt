@@ -62,13 +62,33 @@ CREATE TABLE Meetings(
   #REMOVE meeting_ID INTEGER,
   title VARCHAR(255) NOT NULL,
   #OLD PRIMARY KEY(meeting_ID)
-  FOREIGN KEY (group_ID) REFERENCES Groups(group_ID), #On Delete?? #New! Removes hosts relation
+  FOREIGN KEY (group_ID) REFERENCES Groups(group_ID) #New! Removes hosts relation
+  ON DELETE CASCADE
+  ON UPDATE CASCADE,
   FOREIGN KEY (topic_ID) REFERENCES Topics(topic_ID) #New! Removes discusses relation
   ON DELETE NO ACTION
   ON UPDATE NO ACTION,
   PRIMARY KEY(start_date_time, end_date_time, location) #NEW
 );
-
+#ACTUALLY USED CREATE IS BELOW, SLIGHTLY MODDED
+CREATE TABLE Meetings(
+#Add additional contraint that meeting end time is not before meeting start time
+  start_date_time DATETIME,
+  end_date_time DATETIME,
+  location VARCHAR(255), #New!
+  group_ID INTEGER NOT NULL, #New! (not null enforces exactly one constraint)
+  topic_ID INTEGER NOT NULL, #New!
+  #REMOVE meeting_ID INTEGER,
+  title VARCHAR(255) NOT NULL,
+  #OLD PRIMARY KEY(meeting_ID)
+  FOREIGN KEY (group_ID) REFERENCES Groups(group_ID)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE, #On Delete?? #New! Removes hosts relation
+  FOREIGN KEY (topic_ID) REFERENCES Topics(topic_ID) #New! Removes discusses relation
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+  PRIMARY KEY(start_date_time, end_date_time, location) #NEW
+)
 
 
 #Relationships
@@ -76,9 +96,9 @@ CREATE TABLE Meetings(
 #Member Of 
 
 CREATE TABLE Member_Of(
-  username CHAR(12),
+  username VARCHAR(15),
   group_ID INTEGER,
-  PRIMARY KEY(username, group_ID),
+  PRIMARY KEY(username), #New! removed group_ID from PK enforces user has at most one group
   FOREIGN KEY(username) REFERENCES Users(username) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY(group_ID) REFERENCES Groups(group_ID) ON DELETE NO ACTION ON UPDATE CASCADE
 );
@@ -97,7 +117,7 @@ CREATE TABLE Comprises(
 
 CREATE TABLE Teaches(
   skill_name VARCHAR(20),
-  username CHAR(12),
+  username VARCHAR(15),
   PRIMARY KEY(skill_name, username),
   FOREIGN KEY(skill_name) REFERENCES Skills(name) ON DELETE NO ACTION ON UPDATE CASCADE,
   FOREIGN KEY(username) REFERENCES Users(username) ON DELETE NO ACTION ON UPDATE CASCADE
@@ -107,7 +127,7 @@ CREATE TABLE Teaches(
 
 CREATE TABLE Wants_To_Learn(
   skill_name VARCHAR(20),
-  username CHAR(12),
+  username VARCHAR(15),
   PRIMARY KEY(skill_name, username),
   FOREIGN KEY(skill_name) REFERENCES Skills(name) ON DELETE NO ACTION ON UPDATE CASCADE,
   FOREIGN KEY(username) REFERENCES Users(username) ON DELETE NO ACTION ON UPDATE CASCADE
