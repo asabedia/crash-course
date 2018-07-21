@@ -44,11 +44,9 @@ class SkillDashboardControl extends Component{
     componentDidMount(){
         //fetch skill aggregates from web server
         let skills = [];
-        fetch('http://129.97.25.53:8000/users/skills/counts?count=1', Headers: {})
+        fetch('http://129.97.25.53:8000/skills/counts?count=1')
         .then(results => {
-            const r = results.json();
-            console.log(r);
-            return r;
+            return results.json();
         }).then(skill => skills.push(skill))
         .catch(err => console.log(err));
 

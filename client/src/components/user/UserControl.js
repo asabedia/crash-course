@@ -114,8 +114,9 @@ class UserControl extends Component{
         let users = [];
         fetch('http://129.97.25.53:8000/users')
         .then(results =>{
-            console.log(results);
-            return results.json();
+            const r= results.json();
+            console.log(r);
+            return r;
         }).then(user => users.push(user))
         .catch(err => console.log(err));
         this.setState({
