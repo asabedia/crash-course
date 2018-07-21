@@ -47,7 +47,8 @@ class SkillDashboardControl extends Component{
         fetch('/skills/counts?count=1')
         .then(results => {
             return results.json();
-        }).then(skill => skills.push(skill));
+        }).then(skill => skills.push(skill))
+        .catch(err => console.log(err));
 
         let skill_aggregates = [];
         const unique_skills = new Set(skills.map(skill => skill.skill_name));

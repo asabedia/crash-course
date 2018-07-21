@@ -44,7 +44,8 @@ class CampusControl extends Component{
         let campuses = [];
         fetch('/campuses').then(results =>{
             return results.json();
-        }).then(campus => campuses.push(campus));
+        }).then(campus => campuses.push(campus))
+        .catch(err => console.log(err));
         this.setState({
             campuses: campuses
         });
