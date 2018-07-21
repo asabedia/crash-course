@@ -4,6 +4,11 @@ const app = express();
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
+app.use(function(req, res, next){
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+});
 
 const port = 8000;
 const db_con = mysql.createConnection({
@@ -14,7 +19,7 @@ const db_con = mysql.createConnection({
 });
 
 //Users GETs
-app.get("/users", (req, res)=>{
+app.get("/users", (req, res,next)=>{
 
 	var QUERY =
 		`SELECT U.username, U.password, U.first_name, U.last_name, U.campus_name, M.group_ID
@@ -488,7 +493,7 @@ app.put("/groups/:id/meetings", (req, res)=>{
 
 });
 
-app.listen(port, () => console.log('server started'));
+app.listen(port,"129.97.25.53", () => console.log('server started'));
 
 db_con.connect(
 	function(err){
