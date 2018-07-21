@@ -51,7 +51,7 @@ app.get("/users/:id", (req, res)=>{
 	db_con.query(
 		`SELECT U.username, U.password, U.first_name, U.last_name, U.campus_name, M.group_ID
 		FROM Users U NATURAL JOIN Member_Of M
-		WHERE U.username = ?`
+		WHERE U.username = ?`,
 		req.params.id,
 		function(err, results){
 			if(err) console.log(err);
@@ -511,7 +511,7 @@ app.post("/topics/:id/skills", (req,res)=>{
 
 });
 
-
+*/
 
 db_con.connect(
 	function(err){
