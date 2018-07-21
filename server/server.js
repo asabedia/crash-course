@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
-const port = 5000;
+const port = 8000;
 const db_con = mysql.createConnection({
 	host: "localhost",
 	user: "akandada",
