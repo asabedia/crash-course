@@ -250,16 +250,20 @@ app.put("/groups", (req, res)=>{
 		QUERY1,
 		args,
 		function(err, results){
-			if(err) console.log(err);
-			res.json(results);
+			try{
+			if(err) console.log(err);}
+			catch (err){
+			res.json(results);}
 		});	
 
 	db_con.query(
 		QUERY2,
 		values.username,
 		function(err, results){
-			if(err) console.log(err);
-			res.json(results);
+			try{
+			if(err) console.log(err);}
+			catch (err){
+			res.json(results);}
 		});	
 
 	db_con.query(
@@ -285,8 +289,10 @@ app.post("/groups/:id", (req, res)=>{
 		QUERY,
 		args,
 		function(err, results){
-			if(err) console.log(err);
-			res.json(results);
+			try{
+			if(err) console.log(err);}
+			catch (err){
+			res.json(results);}
 		});
 
 
@@ -383,8 +389,10 @@ app.put("/skills/knows", (req, res)=>{
 		QUERY1,
 		args[0],
 		function(err, results){
-			if(err) console.log(err);
-			res.json(results);
+			try{
+			if(err) console.log(err);}
+			catch (err){
+			res.json(results);}
 
 		});	
   
@@ -392,8 +400,10 @@ app.put("/skills/knows", (req, res)=>{
                 QUERY2,
                 args,
                 function(err, results){
-			if(err) console.log(err);
-                        res.json(results);
+			try{
+			if(err) console.log(err);}
+			catch (err){
+			res.json(results);}
                 });
 
 
@@ -546,7 +556,10 @@ app.put("/groups/:id/meetings", (req, res)=>{
 			FROM Topics T;`,
 			args,
 			function(err, results){
-				if(err) console.log(err);
+			try{
+			if(err) console.log(err);}
+			catch (err){
+			res.json(results);}
 			});
 	}
 
