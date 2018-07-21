@@ -175,7 +175,7 @@ app.get("/campuses", (req, res)=>{
 		FROM Campuses`,
 		function(err, results){
 			if(err) console.log(err);
-			   res.json(ress);
+			   res.json(results);
 		});
 
 });
