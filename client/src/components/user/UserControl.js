@@ -91,23 +91,37 @@ class UserControl extends Component{
     }
 
     onSuccessfulLogin(user){
-        console.log(user.user_name);
         this.setState({user_name: user.user_name});
     }
 
     onSuccessfulEdit(user){
         //send to webserver and update the list of users
-        console.log(user);
-        this.render();
+        fetch("/user/"+user.user_name, {
+            method: "POST",
+            body: JSON.stringify(user),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+        .catch(err=> console.error(err))
+        .then(response => console.log(response));
+        const tmp = this.state.users.filter(u => user.user_name !== u.user_name);
+        tmp.push(user);
+        this.setState({
+            users: tmp
+        });
     }
 
     componentDidMount(){
+        let users = [];
+        fetch('/users').then(results =>{
+            return results.json();
+        }).then(user => users.push(user));
         this.setState({
-          //make api call to get users from the server
-          users: [{user_name:"asabedia", password:"asdfas", first_name: "Ashkan", last_name: "Abedian", campus: "Waterloo"}]
+          users: users
         });
+        console.log(this.state.users);
     }
     render(){
+        const user = this.state.users.find(u=> u.user_name === this.state.user_name);
         return(
             <div className = "user-dashboard">
                 {this.state.user_name === "" && <LoginControl 
@@ -118,10 +132,10 @@ class UserControl extends Component{
                 {this.state.user_name !== "" && 
                     <div>
                         <h1>User Dashboard</h1>
-                        <EditUserInfoForm user = {this.state.users.find(u=> u.user_name === this.state.user_name)} onSuccessfulEdit = {this.onSuccessfulEdit}/>
-                        <MeetingControl/>
-                        <SkillsControl/>
-                        <GroupControl user={this.state.users.find(u=> u.user_name === this.state.user_name)}/>
+                        <EditUserInfoForm user = {user} onSuccessfulEdit = {this.onSuccessfulEdit}/>
+                        <MeetingControl user = {user}/>
+                        <SkillsControl user = {user}/>
+                        <GroupControl user={user}/>
                     </div>
                 }
             </div>

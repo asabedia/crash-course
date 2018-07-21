@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 const port = 5000;
-const db_con = mysql.createConnection({
+/*const db_con = mysql.createConnection({
 	host: "localhost",
 	user: "akandada",
 	password: "Spring@*%2018",
@@ -85,7 +85,7 @@ app.get("/users/:id/skills/knows", (req, res)=>{
 	db_con.query(
 		`SELECT W.skill_name
 		FROM Wants_To_Learn W
-		WHERE w.username = ?`,
+		WHERE W.username = ?`,
 		req.params.id,
 		function(err, results){
 			if(err) console.log(err);
@@ -104,7 +104,7 @@ app.get("/users/:id/skills/wants", (req, res)=>{
 		WHERE T.username = ?`,
 		req.params.id,
 		function(err, results){
-			if(err) res.send("no query specified, query requried");
+			if(err) console.log(err);
 			res.json(results);
 		});
 
@@ -135,6 +135,7 @@ app.put("/users", (req, res)=>{
 		});
 
 });
+
 
 app.post("/users/:id", (req, res)=>{
 	var values = req.body;
@@ -175,6 +176,7 @@ app.get("/campuses", (req, res)=>{
 
 });
 
+
 //Groups
 app.get("/campuses/:id/groups/skills", (req, res)=>{
 
@@ -182,6 +184,7 @@ app.get("/campuses/:id/groups/skills", (req, res)=>{
 	var args = [
 		params.id,
 		params.id];
+
 	db_con.query(
 		`SELECT DISTINCT A.group_ID, G.title, B.skill_name, "Wants" AS "Knows_OR_Wants"
 		FROM Member_Of AS A NATURAL JOIN Wants_To_Learn AS B NATURAL JOIN Groups G
@@ -201,10 +204,12 @@ app.get("/campuses/:id/groups/skills", (req, res)=>{
 
 
 
+
 app.get("/groups/:id/skills", (req, res)=>{
 	
 	args = [req.params.id,
 		req.params.id];
+
 	db_con.query(
 		`SELECT DISTINCT W.skill_name
 		FROM Wants_To_Learn W NATURAL JOIN Member_Of M
@@ -385,8 +390,6 @@ app.post("/skills/delete", (req, res)=>{
 //meetings
 
 app.get("/users/:id/meetings", (req, res)=>{
-//!!!!!!!! This does not work atm
-//will only work if query is changed (inner query removed) or URI is /users/:id/meetings
 
 	var QUERY =
 		`SELECT M.start_date_time, M.end_date_time, M.location, M.title, T.name
@@ -396,18 +399,10 @@ app.get("/users/:id/meetings", (req, res)=>{
 			FROM Member_Of M2
 			WHERE M2.username = ?)`;
 
-	var values = req.body;
-
-	var args = [
-		values.table,
-		values.table,
-		values.username,
-		values.table,
-		values.skill_name];
 
 	db_con.query(
 		QUERY,
-		args,
+		req.params.id,
 		function(err, results){
 			if(err) console.log(err);
 			res.json(results);
@@ -433,7 +428,7 @@ app.put("/groups/:id/meetings", (req, res)=>{
 		res.send("Bad meeting time: meeting cannot start time cannot be after meeting end time");
 	}
 
-	var check1_args = [
+	var check_args = [
 		values.start_date_time,
 		values.end_date_time,
 		values.location,
@@ -441,7 +436,7 @@ app.put("/groups/:id/meetings", (req, res)=>{
 	
 	db_con.query(
 		data_check_query,
-		check1_args,
+		check_args,
 		function(err, results){
 			if(err) console.log(err);
 			if(results){
@@ -459,7 +454,7 @@ app.put("/groups/:id/meetings", (req, res)=>{
 		SELECT ?,?,?,?,?, MAX(topic_ID)
 		FROM Topics;`
 	
-	check2_args = [
+	var args = [
 		values.topic_name,
 		values.start_date_time,
 		values.end_date_time,
@@ -468,8 +463,8 @@ app.put("/groups/:id/meetings", (req, res)=>{
 		values.meeting_title];
 
 	db_con.query(
-		data_check_query,
-		check2_args,
+		QUERY,
+		args,
 		function(err, results){
 			if(err) console.log(err);
 			res.send('success');
@@ -515,6 +510,7 @@ app.post("/topics/:id/skills", (req,res)=>{
 
 
 }); */
+
 
 
 db_con.connect(
