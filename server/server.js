@@ -9,7 +9,6 @@ app.use(function(req, res, next){
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
 });
-
 const port = 8000;
 const db_con = mysql.createConnection({
 	host: "localhost",
@@ -338,27 +337,36 @@ app.put("/skills/wants", (req, res)=>{
 });
 
 app.put("/skills/knows", (req, res)=>{
-	var QUERY =
+	var QUERY1 =
 		`INSERT INTO Skills
-		VALUES (?);
+		VALUES (?)`;
 
-		INSERT INTO Teaches
+	var QUERY2=
+		`INSERT INTO Teaches
 		VALUES (?, ?);`;
 
 	var values = req.body;
 	var args = [
 		values.skill_name,
-		values.skill_name,
 		values.username];
 
+
 	db_con.query(
-		QUERY,
-		args,
+		QUERY1,
+		args[0],
 		function(err, results){
 			if(err) console.log(err);
 			res.json(results);
-		});	
 
+		});	
+  
+        db_con.query(
+                QUERY2,
+                args,
+                function(err, results){
+			if(err) console.log(err);
+                        res.json(results);
+                });
 
 
 });
@@ -367,17 +375,25 @@ app.put("/skills/knows", (req, res)=>{
 app.post("/skills/delete", (req, res)=>{
 	//check that the call passes table properly
 	//table must be: Teaches XOR Wants_To_Learn
-	var QUERY =
-		`DELETE FROM ?
-		WHERE ?.username = ? AND ?.name = ?`;
+	var QUERY_T =
+		`DELETE FROM Teaches
+		WHERE Teaches.username = ? AND Teaches.skill_name = ?`;
+
+	var QUERY_W = 
+		`DELETE FROM Wants_To_Learn
+		WHERE Wants_To_Learn.username = ? AND Wants_To_Learn.skill_name = ?`;
 
 	var values = req.body;
 	var args =[
-		values.table,
-		values.table,
 		values.username,
-		values.table,
 		values.skill_name];
+
+	var QUERY = "";
+	if(values.table == "Teaches"){
+		QUERY = QUERY_T;
+	}else if(values.table == "Wants_To_Learn"){
+		QUERY = QUERY_W;
+	};
 
 	db_con.query(
 		QUERY,
@@ -428,7 +444,7 @@ app.put("/groups/:id/meetings", (req, res)=>{
 			FROM Groups G)`;
 
 	var values = req.body;
-
+	
 	if(values.start_date_time >= values.end_date_time){
 		res.send("Bad meeting time: meeting cannot start time cannot be after meeting end time");
 	}
@@ -444,7 +460,7 @@ app.put("/groups/:id/meetings", (req, res)=>{
 		check_args,
 		function(err, results){
 			if(err) console.log(err);
-			if(results){
+			if(results.start_date_time){
 				res.send("Meeting conflict or bad group_ID"); //make proper error?
 			};
 		});
@@ -453,32 +469,49 @@ app.put("/groups/:id/meetings", (req, res)=>{
 
 	var QUERY =
 		`INSERT INTO Topics(topic_ID, name)
-		VALUES (NULL, ?);
+		VALUES (NULL, ?);`
 
-		INSERT INTO Meetings(start_date_time, end_date_time, location, group_ID, title, topic_ID)
-		SELECT ?,?,?,?,?, MAX(topic_ID)
-		FROM Topics;`
+//		INSERT INTO Meetings(start_date_time, end_date_time, location, group_ID, title, topic_ID)
+//		SELECT ?,?,"?",?,"?", MAX(topic_ID)
+//		FROM Topics;`
 	
-	var args = [
-		values.topic_name,
-		values.start_date_time,
-		values.end_date_time,
-		values.location,
-		req.params.id,
-		values.meeting_title];
+	var args1 = [
+		values.topic_name
+		];
 
 	db_con.query(
 		QUERY,
-		args,
+		args1,
 		function(err, results){
 			if(err) console.log(err);
+			console.log(results);
 			res.send('success');
 		});
+
+	var args2 = [                values.start_date_time,
+                values.end_date_time,
+                values.Location,
+                req.params.id,
+                values.meeting_title]
+	var QUERY2 = `INSERT INTO Meetings(start_date_time, end_date_time, location, group_ID, title, topic_ID)
+              SELECT ?,?,"?",?,"?", MAX(topic_ID)
+              FROM Topics;`
+
+	db_con.query(
+                QUERY2,
+                args2,
+                function(err, results){
+                        if(err) console.log(err);
+                        console.log(results);
+                        res.send('success');
+                });
+
 
 
 	var i;
 	for (i=0; i < values.skill_names.length; i++){
 		var args = [values.skill_names[i],values.topic_ID];
+		console.log(args);
 		db_con.query(
 			`INSERT INTO Comprises(skill_name, topic_ID)
 			SELECT ?, MAX(T.topic_ID)
