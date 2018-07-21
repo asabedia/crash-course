@@ -122,6 +122,7 @@ class UserControl extends Component{
             users.push(user);
         })
         .catch(err => console.log(err));
+        console.log(users);
         this.setState({
           users: users
         });
