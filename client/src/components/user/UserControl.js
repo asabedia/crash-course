@@ -112,7 +112,7 @@ class UserControl extends Component{
 
     componentDidMount(){
         let users = [];
-        fetch('http://localhost:8000/users')
+        fetch('http://localhost:8000/users', {credentials = 'same-origin'})
         .then(results =>{
             console.log(results);
             return results.json();
