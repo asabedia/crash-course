@@ -488,8 +488,15 @@ app.put("/groups/:id/meetings", (req, res)=>{
 
 });
 
+app.listen(port, () => console.log('server started'));
 
-
+db_con.connect(
+	function(err){
+		//Helper function to catch errors (following wrschools mysql to nodejs guide)
+		if(err) throw err;
+		console.log("CONNECTED TO DATABASE");
+	}
+);
 
 //topics
 /*
