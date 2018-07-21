@@ -112,7 +112,7 @@ class UserControl extends Component{
 
     componentDidMount(){
         let users = [];
-        fetch('http://localhost:8000/users')
+        fetch('http://129.97.25.53:8000/users')
         .then(results =>{
             console.log(results);
             return results.json();

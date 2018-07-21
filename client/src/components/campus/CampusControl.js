@@ -42,7 +42,7 @@ class CampusControl extends Component{
     componentDidMount(){
         //make api request to get list of all campuses
         let campuses = [];
-        fetch('http://localhost:8000/campuses').then(results =>{
+        fetch('http://129.97.25.53:8000/users').then(results =>{
             console.log(results);
             return results.json();
         }).then(campus => campuses.push(campus))
