@@ -232,23 +232,38 @@ app.get("/groups/:id/skills", (req, res)=>{
 app.put("/groups", (req, res)=>{
 	var QUERY =
 		`INSERT INTO Groups (title, campus_name)
-		VALUES (?, ?);
+		VALUES (?, ?);`;
 
-		INSERT INTO Member_Of(username, group_ID)
+	var QUERY2 =
+		`INSERT INTO Member_Of(username, group_ID)
 		SELECT ?, MAX(G.group_ID)
-		FROM Groups G;
-
-		SELECT MAX(group_ID)
+		FROM Groups G;`;
+	var QUERY3 =
+		`SELECT MAX(group_ID)
 		FROM Groups;`;
 
 	var values = req.body;
 	var args = [
 		values.group_title,
-		values.campus_name,
-		values.username];
+		values.campus_name];
 	db_con.query(
-		QUERY,
+		QUERY1,
 		args,
+		function(err, results){
+			if(err) console.log(err);
+			res.json(results);
+		});	
+
+	db_con.query(
+		QUERY2,
+		values.username,
+		function(err, results){
+			if(err) console.log(err);
+			res.json(results);
+		});	
+
+	db_con.query(
+		QUERY3,
 		function(err, results){
 			if(err) console.log(err);
 			res.json(results);
@@ -312,25 +327,40 @@ app.get("/skills/counts", (req, res)=>{
 
 
 app.put("/skills/wants", (req, res)=>{
-	var QUERY =
+	var QUERY1 =
 		`INSERT INTO Skills
-		VALUES (?);
-		INSERT INTO Wants_To_Learn
+		VALUES (?);`
+
+	var QUERY2 = 
+		`INSERT INTO Wants_To_Learn
 		VALUES (?, ?);`;
 
 	var values = req.body;
 	var args = [
 		values.skill_name,
-		values.skill_name,
 		values.username];
-
+	try{
 	db_con.query(
-		QUERY,
+		QUERY1,
+		args[0],
+		function(err, results){
+			if(err) console.log(err);
+			res.json(results);
+		});}
+	catch err{
+		};
+
+
+	try{
+	db_con.query(
+		QUERY2,
 		args,
 		function(err, results){
 			if(err) console.log(err);
 			res.json(results);
-		});	
+		});}
+	catch err{
+	}		
 
 
 
