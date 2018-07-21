@@ -157,7 +157,8 @@ class MeetingControl extends Component{
     constructor(props){
         super(props);
         this.state = {
-            meetings: []
+            meetings: [],
+            skills : []
         }
         this.onNewMeeting = this.onNewMeeting.bind(this);
     }
@@ -186,16 +187,20 @@ class MeetingControl extends Component{
     componentDidMount(){
         //make api call to server to fetch all meetings for user where date is in future
         let meetings = [];
-        fetch('/users/'+this.user.user_name+'/meetings')
+        fetch('/users/'+this.props.user.user_name+'/meetings')
         .then(results => {return results.json()})
         .then(meeting => meetings.push(meeting));
         //make api call to get all skills for user's group
-
+        let skills = [];
+        fetch('/groups/' + this.props.user.group_ID + '/skills')
+        .then(results => {return results.json()})
+        .then(skill => skills.push(skill));
         /*meetings: [
                 {title: "Meeting One", name: "Learning",location: "CPH 1234", start: "12:20:00 03/09/2018", end: "1:00:00 03/09/2018"},
                 {title: "Meeting Two", name: "Learning Stuff",location: "CPH 1234", start: "12:20:00 04/09/2018", end: "1:00:00 04/09/2018"}]*/
         this.setState({
-            meetings: meetings
+            meetings: meetings,
+            skills: skills
         });
     }
 
@@ -203,7 +208,7 @@ class MeetingControl extends Component{
         return(
             <div className = "meeting">
                 <MeetingsTable meetings = {this.state.meetings}/>
-                <CreateMeetingForm onNewMeeting = {this.onNewMeeting} skills = {[{skill_name: "Java"},{skill_name: "Python"},{skill_name: "C#"}]}/>
+                <CreateMeetingForm onNewMeeting = {this.onNewMeeting} skills = {this.state.skills}/>
             </div>
         );
     }
