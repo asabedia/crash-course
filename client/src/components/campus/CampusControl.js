@@ -43,6 +43,7 @@ class CampusControl extends Component{
         //make api request to get list of all campuses
         let campuses = [];
         fetch('/campuses').then(results =>{
+            console.log(results);
             return results.json();
         }).then(campus => campuses.push(campus))
         .catch(err => console.log(err));

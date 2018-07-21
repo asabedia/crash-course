@@ -46,6 +46,7 @@ class SkillDashboardControl extends Component{
         let skills = [];
         fetch('/skills/counts?count=1')
         .then(results => {
+            console.log(results);
             return results.json();
         }).then(skill => skills.push(skill))
         .catch(err => console.log(err));

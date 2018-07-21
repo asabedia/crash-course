@@ -113,6 +113,7 @@ class UserControl extends Component{
     componentDidMount(){
         let users = [];
         fetch('/users').then(results =>{
+            console.log(results);
             return results.json();
         }).then(user => users.push(user))
         .catch(err => console.log(err));
