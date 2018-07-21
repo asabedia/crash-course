@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 const port = 5000;
-/*const db_con = mysql.createConnection({
+const db_con = mysql.createConnection({
 	host: "localhost",
 	user: "akandada",
 	password: "Spring@*%2018",
@@ -509,7 +509,7 @@ app.post("/topics/:id/skills", (req,res)=>{
 	}
 
 
-}); */
+});
 
 
 
