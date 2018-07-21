@@ -117,10 +117,7 @@ class UserControl extends Component{
             const r= results.json();
             console.log(r);
             return r;
-        }).then(user => {
-            console.log(user);
-            users.push(user);
-        })
+        }).then(users.forEach(user => users.push(user)))
         .catch(err => console.log(err));
         console.log(users);
         this.setState({
