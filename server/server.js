@@ -339,28 +339,26 @@ app.put("/skills/wants", (req, res)=>{
 	var args = [
 		values.skill_name,
 		values.username];
-	try{
 	db_con.query(
 		QUERY1,
 		args[0],
 		function(err, results){
-			if(err) console.log(err);
+			try{
+			if(err) console.log(err);}
+			catch (err){
 			res.json(results);
-		});}
-	catch err{
-		};
+			}
+	});
 
-
-	try{
 	db_con.query(
 		QUERY2,
 		args,
 		function(err, results){
-			if(err) console.log(err);
-			res.json(results);
-		});}
-	catch err{
-	}		
+			try{
+			if(err) console.log(err);}
+			catch (err){
+			res.json(results);}
+		});
 
 
 
