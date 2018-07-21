@@ -96,7 +96,7 @@ class UserControl extends Component{
 
     onSuccessfulEdit(user){
         //send to webserver and update the list of users
-        fetch("/user/"+user.user_name, {
+        fetch("/users/"+user.user_name, {
             method: "POST",
             body: JSON.stringify(user),
             headers: {'Content-Type': 'application/json'}
@@ -112,7 +112,8 @@ class UserControl extends Component{
 
     componentDidMount(){
         let users = [];
-        fetch('/users').then(results =>{
+        fetch('http://localhost:8000/users')
+        .then(results =>{
             console.log(results);
             return results.json();
         }).then(user => users.push(user))
