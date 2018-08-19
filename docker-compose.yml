@@ -2,6 +2,17 @@ version: '3'
 
 services:
 
+#Database container
+
+  db:
+    image: mysql:latest
+    ports:
+      - "3306"
+    volumes:
+      - ./DB/init.sql:/docker-entrypoint-initdb.d/init.sql 
+    
+
+
 #node container
   server:
     build: ./server
@@ -12,6 +23,8 @@ services:
       APP_SERVER_PORT: ${APP_SERVER_PORT}
     ports:
       - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
+    links:
+      - db
     volumes:
       - ./server/src:/usr/src/crash-course-server/src
     command: npm run server
