@@ -1,39 +1,39 @@
-INSERT INTO Campuses
-VALUES (University of Waterloo, Waterloo);
-INSERT INTO Campuses
-VALUES (Wilfrid Laurier University, Waterloo);
-INSERT INTO Campuses
-VALUES (University of Toronto, Toronto);
-INSERT INTO Campuses
-VALUES (Carleton University, Ottawa);
+INSERT INTO Campuses(name, location)
+VALUES('University of Waterloo','Waterloo');
+INSERT INTO Campuses(name, location)
+VALUES('Wilfrid Laurier University','Waterloo');
+INSERT INTO Campuses(name, location)
+VALUES('University of Toronto','Toronto');
+INSERT INTO Campuses(name, location)
+VALUES('Carleton University','Ottawa');
 
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(abdu123, abdu, abdu, University of Waterloo, password);
+VALUES('abdu123','abdu','abdu','University of Waterloo','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(SheikhAshkan, Ashkan, Sheikhian, University of Waterloo, password);
+VALUES('SheikhAshkan','Ashkan','Sheikhian','University of Waterloo','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(BestDozd, Shiekh, Irani, University of Waterloo, password);
+VALUES('BestDozd','Shiekh','Irani','University of Waterloo','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(grampa_larry, Larry, David, University of Waterloo, password);
+VALUES('grampa_larry','Larry','David','University of Waterloo','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(your_aunty, Awhntee, Gita, University of Waterloo, password);
+VALUES('your_aunty','Awhntee','Gita','University of Waterloo','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(SickDude, Bob, Ross, University of Waterloo, password);
+VALUES('SickDude','Bob','Ross','University of Waterloo','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(VerySmartGuy, Fahad, Salman, University of Waterloo, password);
+VALUES('VerySmartGuy','Fahad','Salman','University of Waterloo','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(RVS, Ranganathan, Varajamoorthynatyashastrisivalingaswamyanantkirshnaperumalbhkatian, University of Waterloo, password);
+VALUES('RVS','Ranganathan','Varajamoorthynatyashastrisivalingaswamyanantkirshnaperumalbhkatian','University of Waterloo','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(0BrainCell, Richard, Feynman, University of Waterloo, password);
+VALUES('0BrainCell','Richard','Feynman','University of Waterloo','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(LiteralGoddess, Shakira, Isabel-Mebarak-Ripoll, Carleton University, password);
+VALUES('LiteralGoddess','Shakira','Isabel-Mebarak-Ripoll','Carleton University','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(BozorgKoon, Baby, Jornie, Carleton University, password);
+VALUES('BozorgKoon','Baby','Jornie','Carleton University','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(HotFire, bubba, gump, Carleton University, password);
+VALUES('HotFire','bubba','gump','Carleton University','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(Mr bean, Bean, Bean, Carleton University, password);
+VALUES('Mr bean','Bean','Bean','Carleton University','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(Bipo, BolaBipo, BolaBo, Carleton University, password);
+VALUES('Bipo','BolaBipo','BolaBo','Carleton University','password');
 INSERT INTO Users(username, first_name, last_name, campus_name, password)
-VALUES(SidTheKid, SidArnt, Batiman, Carleton University, password);
+VALUES('SidTheKid','SidArnt','Batiman','Carleton University','password');
