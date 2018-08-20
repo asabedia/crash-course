@@ -13,7 +13,7 @@ const port = 8000;
 const db_con = mysql.createConnection({
 	host: "db",
 	user: "root",
-	password: "Spring@*%2018",
+	password: "root",
 	database: "crash_course"
 });
 
@@ -567,16 +567,19 @@ app.put("/groups/:id/meetings", (req, res)=>{
 
 });
 
-app.listen(port,"129.97.25.53", () => console.log('server started'));
+console.log('attempting to connect to DB');
 
 db_con.connect(
 	function(err){
 		//Helper function to catch errors (following wrschools mysql to nodejs guide)
-		if(err) throw err;
+		if(err) console.log(err);
 		console.log("CONNECTED TO DATABASE");
 	}
 );
 
+console.log('attempting to start server');
+
+app.listen(port, () => console.log('server started'));
 //topics
 /*
 app.post("/topics/:id/skills", (req,res)=>{
