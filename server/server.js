@@ -11,10 +11,10 @@ app.use(function(req, res, next){
 });
 const port = 8000;
 const db_con = mysql.createConnection({
-	host: "localhost",
-	user: "akandada",
+	host: "db",
+	user: "root",
 	password: "Spring@*%2018",
-	database: "akandada"
+	database: "crash_course"
 });
 
 //Users GETs
