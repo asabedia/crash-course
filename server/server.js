@@ -19,7 +19,6 @@ const db_con = mysql.createConnection({
 
 //Users GETs
 app.get("/users", (req, res,next)=>{
-
 	var QUERY =
 		`SELECT U.username, U.password, U.first_name, U.last_name, U.campus_name, M.group_ID
 		FROM Users U NATURAL JOIN Member_Of M
@@ -47,7 +46,6 @@ app.get("/users", (req, res,next)=>{
 			res.json(results);
 		});
 
-    
 });
 
 app.get("/users/:id", (req, res)=>{
@@ -579,7 +577,7 @@ db_con.connect(
 
 console.log('attempting to start server');
 
-app.listen(port, () => console.log('server started'));
+app.listen(port, () => console.log('api started'));
 //topics
 /*
 app.post("/topics/:id/skills", (req,res)=>{

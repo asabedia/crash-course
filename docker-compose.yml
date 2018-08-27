@@ -12,24 +12,22 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASS}
     volumes:
       - ./DB/init.sql:/docker-entrypoint-initdb.d/init.sql 
+    command: GRANT ALL ON "*.*" to root@'172.19.0.3' IDENTIFIED BY '1510'
     
-
-
 #node container
   server:
     build: ./server
     expose:
       - ${APP_SERVER_PORT}
     environment:
-      API_HOST: ${API_HOST}
-      APP_SERVER_PORT: ${APP_SERVER_PORT}
+      - APP_SERVER_PORT=${APP_SERVER_PORT}
     ports:
       - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
     links:
       - db
     volumes:
-      - ./server/src:/usr/src/crash-course-server/src
-    command: npm run server
+      - ./server:/usr/app/crash-course-server
+    command: npm run start
 
   #react client
   client:
