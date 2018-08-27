@@ -11,15 +11,14 @@ app.use(function(req, res, next){
 });
 const port = 8000;
 const db_con = mysql.createConnection({
-	host: "localhost",
-	user: "akandada",
-	password: "Spring@*%2018",
-	database: "akandada"
+	host: "db",
+	user: "root",
+	password: "root",
+	database: "crash_course"
 });
 
 //Users GETs
 app.get("/users", (req, res,next)=>{
-
 	var QUERY =
 		`SELECT U.username, U.password, U.first_name, U.last_name, U.campus_name, M.group_ID
 		FROM Users U NATURAL JOIN Member_Of M
@@ -47,7 +46,6 @@ app.get("/users", (req, res,next)=>{
 			res.json(results);
 		});
 
-    
 });
 
 app.get("/users/:id", (req, res)=>{
@@ -567,16 +565,19 @@ app.put("/groups/:id/meetings", (req, res)=>{
 
 });
 
-app.listen(port,"129.97.25.53", () => console.log('server started'));
+console.log('attempting to connect to DB');
 
 db_con.connect(
 	function(err){
 		//Helper function to catch errors (following wrschools mysql to nodejs guide)
-		if(err) throw err;
+		if(err) console.log(err);
 		console.log("CONNECTED TO DATABASE");
 	}
 );
 
+console.log('attempting to start server');
+
+app.listen(port, () => console.log('api started'));
 //topics
 /*
 app.post("/topics/:id/skills", (req,res)=>{
