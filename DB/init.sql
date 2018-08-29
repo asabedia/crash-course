@@ -1,8 +1,10 @@
+CREATE USER 'main'@'%' IDENTIFIED BY '1510';
+
 CREATE DATABASE crash_course;
 USE crash_course;
 
 --Grants
-GRANT ALL ON "*.*" to root@'172.19.0.3' IDENTIFIED BY '1510';
+GRANT ALL ON *.* to 'main'@'172.18.0.3' IDENTIFIED BY '1510';
 
 --Create Table Statements
 

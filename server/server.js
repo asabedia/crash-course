@@ -12,8 +12,9 @@ app.use(function(req, res, next){
 const port = 8000;
 const db_con = mysql.createConnection({
 	host: "db",
-	user: "root",
-	password: "root",
+	port: 3306,
+	user: "main",
+	password: "1510",
 	database: "crash_course"
 });
 

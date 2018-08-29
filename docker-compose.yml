@@ -1,4 +1,4 @@
-version: '3'
+version: '2.1'
 
 services:
 
@@ -10,9 +10,10 @@ services:
       - ${DB_PORT}
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASS}
+    healthcheck:
+      test: "exit 0"
     volumes:
       - ./DB/init.sql:/docker-entrypoint-initdb.d/init.sql 
-    command: GRANT ALL ON "*.*" to root@'172.19.0.3' IDENTIFIED BY '1510'
     
 #node container
   server:
@@ -23,6 +24,10 @@ services:
       - APP_SERVER_PORT=${APP_SERVER_PORT}
     ports:
       - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
+    depends_on:
+      db:
+        condition:
+          service_healthy
     links:
       - db
     volumes:
