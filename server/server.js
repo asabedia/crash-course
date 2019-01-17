@@ -11,10 +11,9 @@ app.use(function(req, res, next){
 });
 const port = 8000;
 const db_con = mysql.createConnection({
-	host: "db",
-	port: 3306,
-	user: "main",
-	password: "1510",
+	host: "crash-course-db.cmpnjncbagzl.us-east-2.rds.amazonaws.com",
+	user: "db_admin",
+	password: "kIsmet27",
 	database: "crash_course"
 });
 
