@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios'
 import './CampusControl.css'
 
 
@@ -42,7 +43,8 @@ class CampusControl extends Component{
     componentDidMount(){
         //make api request to get list of all campuses
         let campuses = [];
-        fetch('http://129.97.25.53:8000/users').then(results =>{
+        axios.get('/users')
+        .then(results =>{
             console.log(results);
             return results.json();
         }).then(campus => campuses.push(campus))

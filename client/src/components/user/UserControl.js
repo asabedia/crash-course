@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './UserControl.css';
+import axios from 'axios'
 import LoginControl from '../login/LoginControl';
 import SkillsControl from '../skills/SkillsControl';
 import GroupControl from '../groups/GroupControl';
@@ -112,18 +113,21 @@ class UserControl extends Component{
 
     componentDidMount(){
         let users = [];
-        fetch('/users')
-        .then(results =>{
-            const r= results.json();
-            console.log(r);
-            return r;
-        }).then(u => u.forEach(user => users.push(user)))
-        .catch(err => console.log(err));
-        console.log(users);
-        this.setState({
-          users: users
-        });
-        console.log(this.state.users);
+        axios.get('/users')
+        .then(json => json.data.map(result => (
+            {
+                user_name: result.username,
+                password: result.password,
+                first_name: result.first_name,
+                last_name: result.last_name,
+                campus_name: result.campus_name
+            })))
+            .then(users => {
+                this.setState({
+                    users: users
+                  });
+                  console.log(this.state.users);
+            })
     }
     render(){
         const user = this.state.users.find(u=> u.user_name === this.state.user_name);

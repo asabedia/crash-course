@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios'
 import './MeetingControl.css';
 
 class CreateMeetingForm extends Component{
@@ -174,7 +175,7 @@ class MeetingControl extends Component{
             start_date_time: meeting.start_date_time, 
             end_date_time: meeting.end_date_time
         }
-        fetch("/groups/"+group_id+"/meetings", {
+        axios.get("/groups/"+group_id+"/meetings", {
             method: "POST",
             body: JSON.stringify(meeting_with_group_id),
             headers: {'Content-Type': 'application/json'}
@@ -187,12 +188,12 @@ class MeetingControl extends Component{
     componentDidMount(){
         //make api call to server to fetch all meetings for user where date is in future
         let meetings = [];
-        fetch('/users/'+this.props.user.user_name+'/meetings')
+        axios.get('/users/'+this.props.user.user_name+'/meetings')
         .then(results => {return results.json()})
         .then(meeting => meetings.push(meeting));
         //make api call to get all skills for user's group
         let skills = [];
-        fetch('/groups/' + this.props.user.group_ID + '/skills')
+        axios.get('/groups/' + this.props.user.group_ID + '/skills')
         .then(results => {return results.json()})
         .then(skill => skills.push(skill));
         /*meetings: [

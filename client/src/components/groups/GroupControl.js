@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './GroupControl.css';
+import axios from 'axios'
 import UserInfo from '../user/UserInfo';
 import SkillTag from '../skills/SkillTag';
 
@@ -191,7 +192,7 @@ class GroupControl extends Component{
         //on group created pass username to server
         //send group_name, user_id
         let group_ID = "";
-        fetch("/groups", {
+        /*fetch("/groups", {
             method: "PUT",
             body: JSON.stringify(
                 {
@@ -202,7 +203,7 @@ class GroupControl extends Component{
             headers: {'Content-Type': 'application/json'}
         }).then(res => res.json())
         .catch(err=> console.error(err))
-        .then(response => {group_ID = response.group_ID});
+        .then(response => {group_ID = response.group_ID});*/
         this.setState({
             group_ID: group_ID,
             group_name: group_name,
@@ -212,7 +213,8 @@ class GroupControl extends Component{
 
     onJoinGroup(group){
         //make post to send new membership
-        fetch("/groups/"+ group.group_ID, {
+
+        /*fetch("/groups/"+ group.group_ID, {
             method: "POST",
             body: JSON.stringify(
                 {
@@ -221,13 +223,14 @@ class GroupControl extends Component{
             headers: {'Content-Type': 'application/json'}
         }).then(res => res.json())
         .catch(err=> console.error(err))
-        .then(response => console.log(response));
+        .then(response => console.log(response));*/
 
         //make api request to get the members of this group
         let members = [];
-        fetch('/group/'+group.group_ID+'/members')
+
+        /*fetch('/group/'+group.group_ID+'/members')
         .then(results => {return results.json})
-        .then(member => members.push(member));
+        .then(member => members.push(member));*/
         members.push(this.props.user);
         this.setState({
             members: members,
@@ -240,14 +243,16 @@ class GroupControl extends Component{
         //get group memebers from server using the username
             //need to find out what group the user is in and need all the members of that group
         let members = [];
+        /*
         fetch('/group/' + this.props.user.group_ID + '/members')
         .then(results => {return results.json()})
-        .then(member => members.push(member));
+        .then(member => members.push(member));*/
         //get all users who are in the same campus as this user and have no group
         let users = [];
-        fetch('/users?campus_name='+ this.props.user.campus_name)
+
+        /*fetch('/users?campus_name='+ this.props.user.campus_name)
         .then(results => {return results.json()})
-        .then(user => {users.push(user)});
+        .then(user => {users.push(user)});*/
 
         let users_with_skills = [];
         const distinct_users = new Set(users.map(user => {return user.username}));
@@ -267,9 +272,10 @@ class GroupControl extends Component{
 
         //get all groups on the user's campus
         let groups = [];
-        fetch('/campuses/'+ this.props.user.campus_name + '/groups/skills')
+
+        /*fetch('/campuses/'+ this.props.user.campus_name + '/groups/skills')
         .then(results => {return results.json()})
-        .then(group => groups.push(group));
+        .then(group => groups.push(group));*/
 
         let groups_with_skills = [];
         const distinct_groups = new Set(groups.map(group => {return group.group_ID}));

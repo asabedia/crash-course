@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios'
 import './SkillDashboardControl.css'
 
 class SkillsAggregateTable extends Component{
@@ -44,10 +45,11 @@ class SkillDashboardControl extends Component{
     componentDidMount(){
         //fetch skill aggregates from web server
         let skills = [];
-        fetch('http://129.97.25.53:8000/skills/counts?count=1')
-        .then(results => {
-            return results.json();
-        }).then(skill => skills.push(skill))
+        axios.get('/skills/counts?count=1')
+        .then(json => json.data.map(item => (
+            {skill_name: item.name}   
+        )))
+        .then(skill => skills.push(skill))
         .catch(err => console.log(err));
 
         let skill_aggregates = [];

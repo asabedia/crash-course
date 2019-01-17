@@ -2,19 +2,6 @@ version: '2.1'
 
 services:
 
-#Database container
-
-  db:
-    image: mysql:latest
-    ports:
-      - ${DB_PORT}
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
-    healthcheck:
-      test: "exit 0"
-    volumes:
-      - ./DB/init.sql:/docker-entrypoint-initdb.d/init.sql 
-    
 #node container
   server:
     build: ./server
@@ -24,12 +11,6 @@ services:
       - APP_SERVER_PORT=${APP_SERVER_PORT}
     ports:
       - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
-    depends_on:
-      db:
-        condition:
-          service_healthy
-    links:
-      - db
     volumes:
       - ./server:/usr/app/crash-course-server
     command: npm run start

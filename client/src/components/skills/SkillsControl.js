@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './SkillsControl.css';
+import axios from 'axios'
 import SkillTag from './SkillTag';
 
 class KnownSkillsTable extends Component{
@@ -115,11 +116,11 @@ class SkillsControl extends Component{
         //get all wants and knows for user
         let wants = [];
         let knows =[];
-        fetch('/users/'+ this.props.user.username + '/skills/want')
+        axios.get('/users/'+ this.props.user.username + '/skills/want')
         .then(results => {return results.json()})
         .then(skill => wants.push(skill));
 
-        fetch('/users/'+ this.props.user.username + '/skills/know')
+        axios.get('/users/'+ this.props.user.username + '/skills/know')
         .then(results => {return results.json()})
         .then(skill => knows.push(skill));
         this.setState({
